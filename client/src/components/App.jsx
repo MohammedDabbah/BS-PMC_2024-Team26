@@ -6,6 +6,7 @@ import DeveloperPage from "./DeveloperPage";
 import ManagerPage from "./ManagerPage";
 import TesterPage from "./TesterPage";
 import Login from "./Login";
+import ChangePassword from "./ChangePassword";
 
 
 function App() {
@@ -14,11 +15,12 @@ function App() {
       <Routes>
         <Route exact path="/" element={<Home />} />
         <Route path="/Register" element={<Register />} />
-        
+
         <Route path="/Developer" element={<DeveloperPage />} />
         <Route path="/Manager" element={<ManagerPage />} />
         <Route path="/Tester" element={<TesterPage />} />
         <Route path="/Login" element={<Login />} />
+        <Route path="/ChangePassword" element={<ChangePassword />} />
       </Routes>
     </BrowserRouter>
   );

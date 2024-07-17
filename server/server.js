@@ -53,9 +53,16 @@ passport.serializeUser((user, cb) => {
     }
   });
   
+
+
+
+//Home
   app.get('/', (req, res) => {
     res.send('Welcome to the backend server');
   });
+
+
+//Register
   app.post('/Register', async (req, res) => {
     try {
       const { fname, lname, username, mail, password, role } = req.body;
@@ -118,6 +125,7 @@ function isValidEmail(email) {
 }
 
 
+//Login
 app.post('/login', (req, res, next) => {
   const { username, password, role } = req.body;
   const UserModel = userModels[role];
@@ -147,11 +155,61 @@ app.post('/login', (req, res, next) => {
 
 
 
+//Change password
+app.post('/ChangePassword', async (req, res) => {
+  try {
+    const { username, currentPassword, newPassword, role } = req.body;
+
+    if (!username || !currentPassword || !newPassword || !role) {
+      return res.status(406).json({ message: "Please fill all the details" });
+    }
+
+    const UserModel = userModels[role];
+    if (!UserModel) {
+      return res.status(400).json({ message: "Invalid role specified" });
+    }
+
+    const existingUser = await UserModel.findOne({ username });
+
+    if (!existingUser) {
+      return res.status(406).json({ message: "Username not found" });
+    }
+
+    existingUser.authenticate(currentPassword, async (err, authenticatedUser) => {
+      if (err || !authenticatedUser) {
+        return res.status(406).json({ message: "Incorrect current password" });
+      }
+
+      authenticatedUser.setPassword(newPassword, async (err) => {
+        if (err) {
+          return res.status(500).json("Error setting new password");
+        }
+        await authenticatedUser.save();
+        return res.json("Password changed successfully");
+      });
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Failed to change password");
+  }
+});
 
 
 
+
+// Add this endpoint to check authentication status
+app.get('/authenticated', (req, res) => {
+  if (req.isAuthenticated()) {
+    return res.json({ user: req.user });
+  }
+  res.json({ user: null });
+});
 
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
   });
+
+
+
+
