@@ -1,18 +1,14 @@
 import React from 'react';
-import Header from './Header';
-import Footer from './Footer';
+import LoggedHeader from './LoggedHeader';
 
-function ManagerPage() {
+const ManagerPage = () => {
     return (
         <div>
-            <Header />
-            <div className="content">
-                <h1>Welcome, Manager</h1>
-                <p>This is the manager's page.</p>
-            </div>
-            <Footer />
+            <LoggedHeader />
+            <h2>Manager Page</h2>
+            {/* Other content */}
         </div>
     );
-}
+};
 
 export default ManagerPage;

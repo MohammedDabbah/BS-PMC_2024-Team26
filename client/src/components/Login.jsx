@@ -1,38 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from './AuthContext';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Header from './Header';
 import Footer from './Footer';
 
-function Login() {
+const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('developer'); // Default role
+    const { setUser } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:3001/login', { username, password, role }, { withCredentials: true });
-            if (response.data) {
-                if (role === 'developer') {
-                    navigate('/Developer');
-                } else if (role === 'manager') {
-                    navigate('/Manager');
-                } else if (role === 'tester') {
-                    navigate('/Tester');
-                } else {
-                    alert('Unknown role');
+            const response = await axios.post('http://localhost:3001/login', {
+                username,
+                password,
+                role
+            }, { withCredentials: true });
+
+            if (response.status === 200) {
+                setUser(response.data.user);
+                // Redirect to appropriate page based on role
+                switch (response.data.user.role) {
+                    case 'developer':
+                        navigate('/developer');
+                        break;
+                    case 'tester':
+                        navigate('/tester');
+                        break;
+                    case 'manager':
+                        navigate('/manager');
+                        break;
+                    default:
+                        navigate('/home');
+                        break;
                 }
             } else {
                 alert('Login failed');
             }
-        } catch (err) {
-            console.error(err);
-            alert('Username or Password is Incorrect');
+        } catch (error) {
+            alert('Login failed');
+            console.error(error);
         }
     };
 

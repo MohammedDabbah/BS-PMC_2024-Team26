@@ -30,78 +30,78 @@ Object.entries(userModels).forEach(([role, model]) => {
   passport.use(role, model.createStrategy());
 });
 passport.serializeUser((user, cb) => {
-    process.nextTick(() => {
-      cb(null, {
-        id: user.id,
-        username: user.username,
-        fname: user.fname,
-        lname: user.lname,
-        role: user.role,
-      });
+  process.nextTick(() => {
+    cb(null, {
+      id: user.id,
+      username: user.username,
+      fname: user.fname,
+      lname: user.lname,
+      role: user.role,
     });
   });
-  
-  passport.deserializeUser(async (user, cb) => {
-    const Model = userModels[user.role];
-    if (!Model) return cb(new Error('No user role specified'));
-  
-    try {
-      const userRecord = await Model.findById(user.id);
-      cb(null, userRecord);
-    } catch (err) {
-      cb(err);
-    }
-  });
-  
+});
+
+passport.deserializeUser(async (user, cb) => {
+  const Model = userModels[user.role];
+  if (!Model) return cb(new Error('No user role specified'));
+
+  try {
+    const userRecord = await Model.findById(user.id);
+    cb(null, userRecord);
+  } catch (err) {
+    cb(err);
+  }
+});
+
 
 
 
 //Home
-  app.get('/', (req, res) => {
-    res.send('Welcome to the backend server');
-  });
+app.get('/', (req, res) => {
+  res.send('Welcome to the backend server');
+});
 
 
 //Register
-  app.post('/Register', async (req, res) => {
-    try {
-      const { fname, lname, username, mail, password, role } = req.body;
-  
-      if (!fname || !lname || !username || !mail || !password || !role) {
-        return res.status(406).json({ message: "Please fill all the details" });
+app.post('/Register', async (req, res) => {
+  try {
+    const { fname, lname, username, mail, password, role } = req.body;
+
+    if (!fname || !lname || !username || !mail || !password || !role) {
+      return res.status(406).json({ message: "Please fill all the details" });
+    }
+    if (!isValidEmail(mail)) {
+      return res.status(406).json({ message: "Please enter a valid email address" });
+    }
+
+    const existingUser = await findUserByUsername(username);
+    const existingEmail = await findUserByEmail(mail);
+
+    if (existingEmail) {
+      return res.status(406).json({ message: "Email address is already in use" });
+    }
+    if (existingUser) {
+      return res.status(406).json({ message: "Username is already taken" });
+    }
+
+    const UserModel = userModels[role];
+    if (!UserModel) {
+      console.log(UserModel)
+      return res.status(400).json({ message: "Invalid role specified" });
+    }
+
+    UserModel.register({ fname, lname, username, mail, role }, password, (err, newUser) => {
+      if (err || !newUser) {
+        console.log(err || "Registration failed");
+        return res.status(500).json({ message: "Registration failed" });
       }
-      if (!isValidEmail(mail)) {
-        return res.status(406).json({ message: "Please enter a valid email address" });
-      }
-  
-      const existingUser = await findUserByUsername(username);
-      const existingEmail = await findUserByEmail(mail);
-  
-      if (existingEmail) {
-        return res.status(406).json({ message: "Email address is already in use" });
-      }
-      if (existingUser) {
-        return res.status(406).json({ message: "Username is already taken" });
-      }
-  
-      const UserModel = userModels[role];
-      if (!UserModel) {
-        console.log(UserModel)
-        return res.status(400).json({ message: "Invalid role specified" });
-      }
-  
-      UserModel.register({ fname, lname, username, mail, role }, password, (err, newUser) => {
-        if (err || !newUser) {
-          console.log(err || "Registration failed");
+
+      req.login(newUser, (err) => {
+        if (err) {
+          console.log(err);
           return res.status(500).json({ message: "Registration failed" });
         }
-  
-        req.login(newUser, (err) => {
-          if (err) {
-            console.log(err);
-            return res.status(500).json({ message: "Registration failed" });
-          }
-          return res.status(200).json({ message: "Registration successful", user: newUser });
+        return res.status(200).json({ message: "Registration successful", user: newUser });
       });
     });
 
@@ -148,10 +148,11 @@ app.post('/login', (req, res, next) => {
         console.error('Login error:', err);
         return res.status(500).json({ message: 'Login failed' });
       }
-      return res.json({ username: user.username, role: user.role });
+      return res.json({ user });
     });
   })(req, res, next);
 });
+
 
 
 
@@ -194,6 +195,20 @@ app.post('/ChangePassword', async (req, res) => {
   }
 });
 
+app.post('/logout', (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      return res.status(500).json({ message: 'Logout failed' });
+    }
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ message: 'Failed to destroy session' });
+      }
+      res.clearCookie('connect.sid', { path: '/' });
+      return res.status(200).json({ message: 'Logout successful' });
+    });
+  });
+});
 
 
 
@@ -207,8 +222,8 @@ app.get('/authenticated', (req, res) => {
 
 
 app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`);
-  });
+  console.log(`Example app listening at http://localhost:${port}`);
+});
 
 
 

@@ -1,18 +1,14 @@
 import React from 'react';
-import Header from './Header';
-import Footer from './Footer';
+import LoggedHeader from './LoggedHeader';
 
-function TesterPage() {
+const TesterPage = () => {
     return (
         <div>
-            <Header />
-            <div className="content">
-                <h1>Welcome, Tester</h1>
-                <p>This is the tester's page.</p>
-            </div>
-            <Footer />
+            <LoggedHeader />
+            <h2>Tester Page</h2>
+            {/* Other content */}
         </div>
     );
-}
+};
 
 export default TesterPage;

@@ -1,18 +1,14 @@
 import React from 'react';
-import Header from './Header';
-import Footer from './Footer';
+import LoggedHeader from './LoggedHeader';
 
-function DeveloperPage() {
+const DeveloperPage = () => {
     return (
         <div>
-            <Header />
-            <div className="content">
-                <h1>Welcome, Developer</h1>
-                <p>This is the developer's page.</p>
-            </div>
-            <Footer />
+            <LoggedHeader />
+            <h2>Developer Page</h2>
+            {/* Other content */}
         </div>
     );
-}
+};
 
 export default DeveloperPage;

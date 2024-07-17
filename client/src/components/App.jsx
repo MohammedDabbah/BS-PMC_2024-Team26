@@ -1,28 +1,35 @@
 import React from 'react';
-import { Route, Routes, BrowserRouter } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Home from './Home';
+import Login from './Login';
 import Register from './Register';
-import DeveloperPage from "./DeveloperPage";
-import ManagerPage from "./ManagerPage";
-import TesterPage from "./TesterPage";
-import Login from "./Login";
-import ChangePassword from "./ChangePassword";
-
-
+import DeveloperPage from './DeveloperPage';
+import TesterPage from './TesterPage';
+import ManagerPage from './ManagerPage';
+import { AuthProvider } from './AuthContext';
+import ProtectedRoute from './ProtectedRoute';
+import PublicRoute from './PublicRoute';
+import ChangePassword from './ChangePassword';
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route exact path="/" element={<Home />} />
-        <Route path="/Register" element={<Register />} />
-
-        <Route path="/Developer" element={<DeveloperPage />} />
-        <Route path="/Manager" element={<ManagerPage />} />
-        <Route path="/Tester" element={<TesterPage />} />
-        <Route path="/Login" element={<Login />} />
-        <Route path="/ChangePassword" element={<ChangePassword />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route element={<PublicRoute />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/ChangePassword" element={<ChangePassword />} />
+            <Route path="/" element={<Home />} />
+          </Route>
+          <Route element={<ProtectedRoute />}>
+            <Route path="/developer" element={<DeveloperPage />} />
+            <Route path="/tester" element={<TesterPage />} />
+            <Route path="/manager" element={<ManagerPage />} />
+          </Route>
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 
