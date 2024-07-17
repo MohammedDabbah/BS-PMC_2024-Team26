@@ -1,0 +1,29 @@
+.small-form-group {
+    max-width: 300px; /* Adjust the max-width as needed */
+    margin: 0 auto; /* Center the form group */
+    margin-top: 0.2rem;
+  }
+  img{
+    width: 40rem;
+    height: 20rem;
+    border-radius: 100%;
+  }
+  .profile{
+    /* max-width: 300px; Adjust the max-width as needed */
+    margin: 0 auto; /* Center the form group */
+    margin-top: 1rem;
+    /* margin-right:2rem; */
+  }
+  .bt{
+    border: none !important;
+    outline: none !important;
+  }
+  .proP{
+    background-color: #E4E9FD;
+  background-image: -webkit-linear-gradient(65deg, #0E46A3 30%, #9AC8CD 50%);
+  min-height:50rem;
+  font-family: 'helvetica neue';
+  }
+  .error-message {
+    margin-left: 850px; /* Adjust this value to move the error message more to the right */
+}

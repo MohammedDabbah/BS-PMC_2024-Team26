@@ -1,0 +1,63 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_USERNAME = 'mdabbah670'
+        DOCKER_PASSWORD = 'dckr_pat_8DKOP-76RacLMwxKfTzxB9oMT6c'
+        DOCKER_IMAGE_BACKEND = 'mdabbah670/web_app:ai_proj-backend'
+        DOCKER_IMAGE_FRONTEND = 'mdabbah670/web_app:ai_proj-frontend'
+    }
+
+    stages {
+        stage('Build Docker Images') {
+            steps {
+                script {
+                    sh 'docker build -t $DOCKER_IMAGE_BACKEND -f server/Dockerfile .'
+                    sh 'docker build -t $DOCKER_IMAGE_FRONTEND -f client/Dockerfile .'
+                }
+            }
+        }
+
+        stage('Push Docker Images') {
+            steps {
+                script {
+                     withCredentials([usernamePassword(credentialsId: '010101010', 
+                                                      usernameVariable: 'DOCKER_HUB_USERNAME', 
+                                                      passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
+                    sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
+                    sh 'docker push $DOCKER_IMAGE_BACKEND'
+                    sh 'docker push $DOCKER_IMAGE_FRONTEND'
+                }
+            }
+        }
+        }
+
+        stage('Deploy Backend') {
+            steps {
+                script {
+                    sh 'docker pull $DOCKER_IMAGE_BACKEND'
+                    sh 'docker stop backend-container || true'
+                    sh 'docker rm backend-container || true'
+                    sh 'docker run -d --name backend-container -p 3001:3001 $DOCKER_IMAGE_BACKEND'
+                }
+            }
+        }
+
+        stage('Deploy Frontend') {
+            steps {
+                script {
+                    sh 'docker pull $DOCKER_IMAGE_FRONTEND'
+                    sh 'docker stop frontend-container || true'
+                    sh 'docker rm frontend-container || true'
+                    sh 'docker run -d --name frontend-container -p 3002:3002 $DOCKER_IMAGE_FRONTEND'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            sh 'docker system prune -af'
+        }
+    }
+}
