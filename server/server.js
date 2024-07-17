@@ -118,7 +118,32 @@ function isValidEmail(email) {
 }
 
 
+app.post('/login', (req, res, next) => {
+  const { username, password, role } = req.body;
+  const UserModel = userModels[role];
 
+  if (!UserModel) {
+    return res.status(400).json({ message: 'Invalid role specified' });
+  }
+
+  passport.authenticate(role, (err, user, info) => {
+    if (err) {
+      console.error('Authentication error:', err);
+      return res.status(500).json({ message: 'An error occurred during authentication' });
+    }
+    if (!user) {
+      console.warn('Authentication failed:', info ? info.message : 'Unknown reason');
+      return res.status(401).json({ message: 'Username or Password is Incorrect' });
+    }
+    req.login(user, (err) => {
+      if (err) {
+        console.error('Login error:', err);
+        return res.status(500).json({ message: 'Login failed' });
+      }
+      return res.json({ username: user.username, role: user.role });
+    });
+  })(req, res, next);
+});
 
 
 
