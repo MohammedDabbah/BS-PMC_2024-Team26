@@ -52,7 +52,6 @@ const Login = () => {
 
     return (
         <div>
-            <Header />
             <Form onSubmit={handleLogin} className='small-form-group'>
                 <h2 style={{ textAlign: "center" }}>Login</h2>
                 <Row>
@@ -103,7 +102,7 @@ const Login = () => {
                                 value='Login'
                             />
                         </Form.Group>
-                        <a href="/" className='small-form-group'>Don't have an account? Register here</a>
+                        <a href="/Register" className='small-form-group'>Don't have an account? Register here</a>
                         <a href="/ResetPassword" className='small-form-group'>Forget password? Click here</a>
                     </Col>
                 </Row>

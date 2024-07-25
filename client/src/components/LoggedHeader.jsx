@@ -1,7 +1,8 @@
 import React, { useContext } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import axios from 'axios';
 
 const LoggedHeader = () => {
   const { setUser } = useContext(AuthContext);
@@ -22,14 +23,21 @@ const LoggedHeader = () => {
     }
   };
 
+  const handleProfile = () => {
+    console.log("Navigating to profile");
+    navigate('/profile');
+  };
+
   return (
-    <header>
-      <h1>Development App-AI</h1>
-      <nav>
-        <button onClick={handleLogout}>Logout</button>
-        {/* Other navigation links */}
-      </nav>
-    </header>
+    <div className="d-flex justify-content-end align-items-center w-100">
+      <button className='btn btn-outline-primary me-2' onClick={handleProfile}>
+        <AccountCircleIcon style={{ marginRight: '0.5rem' }} />
+        Profile
+      </button>
+      <button onClick={handleLogout} className='btn btn-danger'>
+        Logout
+      </button>
+    </div>
   );
 };
 

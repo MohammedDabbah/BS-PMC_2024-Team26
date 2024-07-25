@@ -10,6 +10,7 @@ import { AuthProvider } from './AuthContext';
 import ProtectedRoute from './ProtectedRoute';
 import PublicRoute from './PublicRoute';
 import ChangePassword from './ChangePassword';
+import Profile from './Profile';
 function App() {
   return (
     <AuthProvider>
@@ -18,13 +19,14 @@ function App() {
           <Route element={<PublicRoute />}>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/ChangePassword" element={<ChangePassword />} />
             <Route path="/" element={<Home />} />
           </Route>
           <Route element={<ProtectedRoute />}>
             <Route path="/developer" element={<DeveloperPage />} />
             <Route path="/tester" element={<TesterPage />} />
             <Route path="/manager" element={<ManagerPage />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/ChangePassword" element={<ChangePassword />} />
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

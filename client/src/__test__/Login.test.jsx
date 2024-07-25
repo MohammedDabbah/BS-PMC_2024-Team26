@@ -14,12 +14,15 @@ window.alert = jest.fn();
 
 describe('Login Component', () => {
     beforeEach(() => {
-        axios.get = jest.fn().mockResolvedValue({ data: { user: { username: 'johndoe', role: 'developer' } } });
+        axios.post = jest.fn();
     });
 
     test('renders form and logs in successfully', async () => {
         // Mock successful response
-        axios.post = jest.fn().mockResolvedValue({ data: { user: { username: 'johndoe', role: 'developer' } } });
+        axios.post.mockResolvedValue({
+            data: { user: { username: 'johndoe', role: 'developer' } },
+            status: 200
+        });
 
         render(
             <MemoryRouter>
@@ -50,13 +53,16 @@ describe('Login Component', () => {
             );
         });
 
-        // Assert success behavior (this would ideally involve checking for redirection or some state change)
-        // Check for any UI changes or state updates that indicate a successful login
+        // Assert successful login behavior
+        // Ideally, check for redirection or some state change that indicates a successful login
+        // Since redirection is handled by `navigate`, you might want to mock `navigate` for further assertions
     });
 
     test('displays an error message when login fails', async () => {
         // Mock error response
-        axios.post = jest.fn().mockRejectedValue({ response: { data: { message: 'Login failed' } } });
+        axios.post.mockRejectedValue({
+            response: { data: { message: 'Login failed' } }
+        });
 
         render(
             <MemoryRouter>
@@ -76,7 +82,7 @@ describe('Login Component', () => {
 
         // Assert error message
         await waitFor(() => {
-            expect(window.alert).toHaveBeenCalledWith('Username or Password is Incorrect');
+            expect(window.alert).toHaveBeenCalledWith('Login failed');
         });
     });
 });

@@ -1,10 +1,10 @@
 import React from 'react';
-import LoggedHeader from './LoggedHeader';
+import Header from './Header';
 
 const ManagerPage = () => {
     return (
         <div>
-            <LoggedHeader />
+            <Header />
             <h2>Manager Page</h2>
             {/* Other content */}
         </div>

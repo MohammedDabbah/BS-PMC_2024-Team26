@@ -1,10 +1,11 @@
 import React from 'react';
 import LoggedHeader from './LoggedHeader';
+import Header from './Header';
 
 const TesterPage = () => {
     return (
         <div>
-            <LoggedHeader />
+        <Header/>
             <h2>Tester Page</h2>
             {/* Other content */}
         </div>

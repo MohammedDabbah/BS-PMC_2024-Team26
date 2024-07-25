@@ -25,7 +25,8 @@ describe('Register Component', () => {
     fireEvent.change(screen.getByPlaceholderText('Username'), { target: { value: 'johndoe' } });
     fireEvent.change(screen.getByPlaceholderText('name@example.com'), { target: { value: 'john.doe@example.com' } });
     fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'Password1!' } });
-    fireEvent.click(screen.getByLabelText('Developer'),{target:{value: 'developer'}});
+    fireEvent.change(screen.getByPlaceholderText('Enter the 4-digit code'), { target: { value: '1234' } });
+    fireEvent.click(screen.getByLabelText('Developer'));
 
     // Submit the form
     fireEvent.click(screen.getByRole('button', { name: /Register/i }));
@@ -41,6 +42,7 @@ describe('Register Component', () => {
           mail: 'john.doe@example.com',
           password: 'Password1!',
           role: 'developer',
+          code: '1234'  // Include the verification code in the request body
         },
         { withCredentials: true }
       );
@@ -48,7 +50,7 @@ describe('Register Component', () => {
 
     // Assert success behavior
     await waitFor(() => {
-      expect(screen.queryByText(/Registration successful/)).toBeInTheDocument();
+      expect(screen.getByText(/Registration successful/)).toBeInTheDocument();
     });
   });
 
@@ -68,7 +70,8 @@ describe('Register Component', () => {
     fireEvent.change(screen.getByPlaceholderText('Username'), { target: { value: 'johndoe' } });
     fireEvent.change(screen.getByPlaceholderText('name@example.com'), { target: { value: 'john.doe@example.com' } });
     fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'Password1!' } });
-    fireEvent.click(screen.getByLabelText('Developer'),{target:{value: 'developer'}});
+    fireEvent.change(screen.getByPlaceholderText('Enter the 4-digit code'), { target: { value: '1234' } });
+    fireEvent.click(screen.getByLabelText('Developer'));
 
     // Submit the form
     fireEvent.click(screen.getByRole('button', { name: /Register/i }));

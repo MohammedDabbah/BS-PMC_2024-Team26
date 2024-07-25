@@ -5,6 +5,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Header from './Header';
+import CheckIcon from '@mui/icons-material/Check';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -13,13 +14,17 @@ const Register = () => {
     username: '',
     mail: '',
     password: '',
-    role: ''
+    role: '',
+    code: ''
   });
   const [messages, setMessages] = useState({
     errorMessage: '',
     passwordError: '',
-    successMessage: ''
+    successMessage: '',
+    verificationMessage: '',
+    codeError: ''
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -31,11 +36,12 @@ const Register = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
-    console.log(formData.role)
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    console.log('Form Data:', formData);
 
     if (!validatePassword(formData.password)) {
       setMessages((prevMessages) => ({
@@ -45,31 +51,64 @@ const Register = () => {
       return;
     }
 
+    if (formData.code === '') {
+      setMessages((prevMessages) => ({
+        ...prevMessages,
+        codeError: 'Please enter the verification code.'
+      }));
+      return;
+    }
+
+    setIsLoading(true);
+
     try {
-      const response = await axios.post(
-        'http://localhost:3001/Register',
-        formData,
-        { withCredentials: true }
-      );
-      console.log('Registration successful', response);
+      const response = await axios.post('http://localhost:3001/Register', formData, { withCredentials: true });
+      console.log('Registration Response:', response.data);
       setMessages({
         errorMessage: '',
         passwordError: '',
-        successMessage: 'Registration successful'
+        successMessage: 'Registration successful',
+        verificationMessage: '',
+        codeError: ''
       });
-      navigate('/');
+      navigate(0);
     } catch (error) {
+      console.error('Registration Error:', error);
       setMessages((prevMessages) => ({
         ...prevMessages,
-        errorMessage: 'Registration failed'
+        errorMessage: error.response?.data?.message || 'Registration failed'
+      }));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerification = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await axios.get('http://localhost:3001/Verification', {params: {
+        mail:formData.mail
+      }},{ withCredentials: true });
+      console.log('Verification Response:', response.data);
+      setMessages((prevMessages) => ({
+        ...prevMessages,
+        verificationMessage: 'Verification email sent',
+        codeError: ''
+      }));
+    } catch (error) {
+      console.error('Verification Error:', error);
+      setMessages((prevMessages) => ({
+        ...prevMessages,
+        verificationMessage: 'Failed to send verification email',
+        codeError: ''
       }));
     }
   };
 
   return (
     <div>
-    <Header/>
       <Form onSubmit={handleSubmit} className='small-form-group'>
+      <h2 style={{ textAlign: "center" }}>Sign up</h2>
         <Row>
           <Col md={12}>
             <Form.Group className="mb-3" controlId="formFname">
@@ -80,6 +119,7 @@ const Register = () => {
                 name="fname"
                 value={formData.fname}
                 onChange={handleChange}
+                required
               />
             </Form.Group>
           </Col>
@@ -93,6 +133,7 @@ const Register = () => {
                 name="lname"
                 value={formData.lname}
                 onChange={handleChange}
+                required
               />
             </Form.Group>
           </Col>
@@ -106,6 +147,7 @@ const Register = () => {
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
+                required
               />
             </Form.Group>
           </Col>
@@ -119,7 +161,36 @@ const Register = () => {
                 name="mail"
                 value={formData.mail}
                 onChange={handleChange}
+                required
               />
+             
+            </Form.Group>
+          </Col>
+
+          <Col md={12}>
+            <Form.Group className="small-form-group">
+              {messages.verificationMessage && <Form.Text style={{ color: 'blue' }}>{messages.verificationMessage}</Form.Text>}
+              <Form.Control
+                 className="btn btn-success"
+                type="button"
+                value={'Verify Email'}
+                onClick={handleVerification}
+              />
+            </Form.Group>
+          </Col>
+
+          <Col md={12}>
+            <Form.Group className="mb-3" controlId="formCode">
+              <Form.Control
+                className="small-form-group"
+                type="text"
+                placeholder="Enter the 4-digit code"
+                name="code"
+                value={formData.code}
+                onChange={handleChange}
+                required
+              />
+              {messages.codeError && <Form.Text style={{ color: 'red' }}>{messages.codeError}</Form.Text>}
             </Form.Group>
           </Col>
 
@@ -132,16 +203,15 @@ const Register = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
+                required
               />
               {messages.passwordError && <Form.Text style={{ color: 'red' }}>{messages.passwordError}</Form.Text>}
             </Form.Group>
           </Col>
-          
+
           <Col md={12}>
             <Form.Group>
-              <Form.Label>
-                Select your role:
-              </Form.Label>
+              <Form.Label>Select your role:</Form.Label>
               <div className="d-flex">
                 <Form.Check
                   type="radio"
@@ -178,7 +248,7 @@ const Register = () => {
 
           <Col md={12}>
             <Form.Group className="mb-3 small-form-group" controlId="formSubmit">
-              <Form.Control type="submit" value="Register" className="btn btn-primary" />
+              <Form.Control type="submit" value={isLoading ? "Registering..." : "Register"} className="btn btn-primary" disabled={isLoading} />
             </Form.Group>
           </Col>
         </Row>

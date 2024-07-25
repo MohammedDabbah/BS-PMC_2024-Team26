@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
-import Home from './Home';
 
 const PublicRoute = () => {
   const { user, loading } = useContext(AuthContext);
@@ -10,7 +9,7 @@ const PublicRoute = () => {
     return <div>Loading...</div>;
   }
 
-  return user ? < Home/> : <Outlet />;
+  return user ? <Navigate to={`/${user.role}`}/> : <Outlet/>;
 };
 
 export default PublicRoute;

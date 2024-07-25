@@ -1,10 +1,10 @@
 import React from 'react';
-import LoggedHeader from './LoggedHeader';
+import Header from './Header';
 
 const DeveloperPage = () => {
     return (
         <div>
-            <LoggedHeader />
+            <Header />
             <h2>Developer Page</h2>
             {/* Other content */}
         </div>

@@ -40,7 +40,6 @@ function ChangePassword() {
 
     return (
         <div>
-            <Header />
             <Form onSubmit={handleSubmit} className="mb-3">
                 <h2 style={{ marginLeft: '0.5rem', marginTop: "1rem", fontStyle: 'oblique', fontFamily: 'monospace', textDecorationLine: ' overline' }}>Password reset</h2>
                 <Row>

@@ -4,8 +4,10 @@ const session = require('express-session');
 const passport = require('passport');
 const bodyParser = require('body-parser');
 const userModels = require('./mongodb');
+const { generateFourDigitCode, sendEmail} = require('./mail');
 const app = express();
 const port = 3001;
+const verificationCodes = {};
 
 const corsOptions = {
   origin: "http://localhost:3000", // Replace with your frontend URL
@@ -37,6 +39,7 @@ passport.serializeUser((user, cb) => {
       fname: user.fname,
       lname: user.lname,
       role: user.role,
+      mail:user.mail,
     });
   });
 });
@@ -62,54 +65,84 @@ app.get('/', (req, res) => {
 });
 
 
+
+app.get('/Verification', async (req, res) => {
+  try {
+      const { mail } = req.query;
+    
+
+      if (!mail) {
+          return res.status(400).json({ message: "Email is required" });
+      }
+
+      const code = generateFourDigitCode();
+      verificationCodes[mail] = code;
+      console.log(`Generated code for ${mail}: ${code}`);
+      
+      await sendEmail(mail, 'Email Verification', `Your verification code: ${code}`);
+      res.status(200).send('Verification email sent');
+  } catch (err) {
+      console.error('Error in /Verification route:', err);
+      res.status(500).send('Failed to send verification email');
+  }
+});
+
 //Register
 app.post('/Register', async (req, res) => {
   try {
-    const { fname, lname, username, mail, password, role } = req.body;
+      const { fname, lname, username, mail, password, role, code } = req.body;
 
-    if (!fname || !lname || !username || !mail || !password || !role) {
-      return res.status(406).json({ message: "Please fill all the details" });
-    }
-    if (!isValidEmail(mail)) {
-      return res.status(406).json({ message: "Please enter a valid email address" });
-    }
-
-    const existingUser = await findUserByUsername(username);
-    const existingEmail = await findUserByEmail(mail);
-
-    if (existingEmail) {
-      return res.status(406).json({ message: "Email address is already in use" });
-    }
-    if (existingUser) {
-      return res.status(406).json({ message: "Username is already taken" });
-    }
-
-    const UserModel = userModels[role];
-    if (!UserModel) {
-      console.log(UserModel)
-      return res.status(400).json({ message: "Invalid role specified" });
-    }
-
-    UserModel.register({ fname, lname, username, mail, role }, password, (err, newUser) => {
-      if (err || !newUser) {
-        console.log(err || "Registration failed");
-        return res.status(500).json({ message: "Registration failed" });
+      if (!fname || !lname || !username || !mail || !password || !role || !code) {
+          return res.status(406).json({ message: "Please fill all the details" });
+      }
+      if (!isValidEmail(mail)) {
+          return res.status(406).json({ message: "Please enter a valid email address" });
       }
 
-      req.login(newUser, (err) => {
-        if (err) {
-          console.log(err);
-          return res.status(500).json({ message: "Registration failed" });
-        }
-        return res.status(200).json({ message: "Registration successful", user: newUser });
+      const existingUser = await findUserByUsername(username);
+      const existingEmail = await findUserByEmail(mail);
+
+      if (existingEmail) {
+          return res.status(406).json({ message: "Email address is already in use" });
+      }
+      if (existingUser) {
+          return res.status(406).json({ message: "Username is already taken" });
+      }
+      console.log(verificationCodes[mail],' code:',code)
+      if (`${verificationCodes[mail]}` !== code) {
+          return res.status(406).json({ message: "Please enter a valid code" });
+      }
+
+      // Clear the used code
+      delete verificationCodes[mail];
+
+      const UserModel = userModels[role];
+      if (!UserModel) {
+          return res.status(400).json({ message: "Invalid role specified" });
+      }
+
+      UserModel.register({ fname, lname, username, mail, role }, password, (err, newUser) => {
+          if (err || !newUser) {
+              console.error('Error in registration:', err);
+              return res.status(500).json({ message: "Registration failed" });
+          }
+
+          req.login(newUser, (err) => {
+              if (err) {
+                  console.error('Error logging in after registration:', err);
+                  return res.status(500).json({ message: "Registration failed" });
+              }
+              return res.status(200).json({ message: "Registration successful", user: newUser });
+          });
       });
-    });
 
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({ message: "Registration failed" });
+      console.error('Error in /Register route:', err);
+      return res.status(500).json({ message: "Registration failed" });
   }
 });
+
+
 
 async function findUserByUsername(username) {
   return Promise.any(Object.values(userModels).map(model => model.findOne({ username })));
@@ -214,11 +247,25 @@ app.post('/logout', (req, res) => {
 
 // Add this endpoint to check authentication status
 app.get('/authenticated', (req, res) => {
+  console.log(req.user);
+  console.log(req.isAuthenticated());
   if (req.isAuthenticated()) {
+    console.log('test-auth')
     return res.json({ user: req.user });
   }
   res.json({ user: null });
 });
+
+app.get('/profile', (req, res) => {
+  if (req.user) {
+    return res.status(200).json(req.user);
+  } else {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+});
+
+
+
 
 
 app.listen(port, () => {
