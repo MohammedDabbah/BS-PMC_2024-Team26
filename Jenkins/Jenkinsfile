@@ -17,14 +17,16 @@ pipeline {
                 }
             }
         }
-         stage('Unit Test'){
-            steps{
-                script{
-                    sh 'npm test'
+         stage('Run Frontend Tests') {
+            steps {
+                script {
+                    dir('client') {
+                        // Run tests in the frontend container
+                        sh 'docker run --rm frontend-image npm test -- --watchAll=false'
+                    }
                 }
             }
         }
-
         stage('Push Docker Images') {
             steps {
                 script {
