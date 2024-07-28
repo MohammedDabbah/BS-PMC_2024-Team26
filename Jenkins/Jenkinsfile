@@ -17,28 +17,33 @@ pipeline {
                 }
             }
         }
-         stage('Run Frontend Tests') {
+        
+        stage('Unit Tests') {
             steps {
                 script {
                     dir('client') {
-                        // Run tests in the frontend container
-                        sh 'docker run --rm frontend-image npm test -- --watchAll=false'
+                        // Ensure dependencies are installed
+                        sh 'npm install'
+
+                        // Run unit tests
+                        sh 'npm test -- --coverage'
                     }
                 }
             }
         }
+
         stage('Push Docker Images') {
             steps {
                 script {
-                     withCredentials([usernamePassword(credentialsId: '010101010', 
-                                                      usernameVariable: 'DOCKER_HUB_USERNAME', 
-                                                      passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
-                    sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
-                    sh 'docker push $DOCKER_IMAGE_BACKEND'
-                    sh 'docker push $DOCKER_IMAGE_FRONTEND'
+                    withCredentials([usernamePassword(credentialsId: '010101010', 
+                                                     usernameVariable: 'DOCKER_HUB_USERNAME', 
+                                                     passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
+                        sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
+                        sh 'docker push $DOCKER_IMAGE_BACKEND'
+                        sh 'docker push $DOCKER_IMAGE_FRONTEND'
+                    }
                 }
             }
-        }
         }
 
         stage('Deploy Backend') {
