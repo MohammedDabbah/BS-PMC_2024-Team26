@@ -242,56 +242,40 @@ app.post('/ChangePassword', async (req, res) => {
 //Forgot password
 app.post('/ForgotPassword', async (req, res) => {
   try {
-    const { username, password, mail, role, code } = req.body;
+    const { username, mail,code,role,password } = req.body;
 
     if (!username || !password || !mail || !role || !code) {
       return res.status(406).json({ message: "Please fill all the details" });
     }
 
-    if (!isValidEmail(mail)) {
-      return res.status(406).json({ message: "Please enter a valid email address" });
-    }
-
-    const existingUser = await findUserByUsername(username);
-    const existingEmail = await findUserByEmail(mail);
-
-    if (!existingEmail) {
-        return res.status(406).json({ message: "Email address not found" });
-    }
-    if (!existingUser) {
-        return res.status(406).json({ message: "Username not found" });}
-
-    console.log(verificationCodes[mail],' code:',code)
-    if (`${verificationCodes[mail]}` !== code) {
-        return res.status(406).json({ message: "Please enter a valid code" });
-    }
-
-    delete verificationCodes[mail];
-
     const UserModel = userModels[role];
     if (!UserModel) {
-        return res.status(400).json({ message: "Invalid role specified" });
+      return res.status(400).json({ message: "Invalid role specified" });
     }
 
-    UserModel.ForgotPassword({username, mail, role }, password, (err, newUser) => {
-        if (err || !newUser) {
-            console.error('Error in resetting password:', err);
-            return res.status(500).json({ message: "resetting password failed" });
+    const existingUser = await UserModel.findOne({ username });
+
+    if (!existingUser) {
+      return res.status(406).json({ message: "Username not found" });
+    }
+    if (!verificationCodes[mail] || `${verificationCodes[mail]}` !== code) {
+      return res.status(400).json({ message: "Invalid or expired verification code" });
+    }
+
+    // Remove the used verification code
+    delete verificationCodes[mail];
+
+        existingUser.setPassword(password ,async (err) => {
+        if (err) {
+          return res.status(500).json("Error setting new password");
         }
-
-        req.login(newUser, (err) => {
-            if (err) {
-                console.error('Error logging in after resetting password:', err);
-                return res.status(500).json({ message: "resetting password failed" });
-            }
-            return res.status(200).json({ message: "resetting password successful", user: newUser });
-        });
-    });
-
-} catch (err) {
-    console.error('Error in /ForgotPassword route:', err);
-    return res.status(500).json({ message: "resetting password failed" });
-}
+        await existingUser.save();
+        return res.json("Password changed successfully");
+      });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Failed to change password");
+  }
 });
 
 
