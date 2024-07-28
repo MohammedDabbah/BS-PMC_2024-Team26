@@ -18,4 +18,4 @@ COPY . .
 EXPOSE 3000
 
 # Run the web service on container startup.
-CMD ["npm", "start"]
+CMD ["npm", "start","test"]

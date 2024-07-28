@@ -53,23 +53,22 @@ pipeline {
                  }
              }
          }
-         stage('Unit Tests') {
-            steps {
-                script {
-                    dir('client') {
-                       // Check Node.js and npm versions
-                sh 'node -v'
-                sh 'npm -v'
-
-                // Ensure dependencies are installed
-                sh 'npm install'
-
-                // Run unit tests
-                sh 'npm test -- --coverage'
-                    }
+      stage('Run Frontend Tests') {
+    steps {
+        script {
+            docker.image('node:14').inside {
+                dir('client') {
+                    sh 'rm -rf node_modules package-lock.json' // Clean up
+                    sh 'npm install'
+                    sh 'npm test -- --coverage'
                 }
             }
         }
+    }
+}
+
+
+         
      }
 
      post {
