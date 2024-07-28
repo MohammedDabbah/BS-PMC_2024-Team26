@@ -9,8 +9,10 @@ import ManagerPage from './ManagerPage';
 import { AuthProvider } from './AuthContext';
 import ProtectedRoute from './ProtectedRoute';
 import PublicRoute from './PublicRoute';
-import ChangePassword from './ChangePassword';
+import ForgotPassword from './ForgotPassword';
 import Profile from './Profile';
+import ChangePassword from './ChangePassword';
+
 function App() {
   return (
     <AuthProvider>
@@ -20,6 +22,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/" element={<Home />} />
+            <Route path="/ForgotPassword" element={<ForgotPassword />} />
           </Route>
           <Route element={<ProtectedRoute />}>
             <Route path="/developer" element={<DeveloperPage />} />

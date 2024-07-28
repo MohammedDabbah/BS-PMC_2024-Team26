@@ -103,7 +103,8 @@ const Login = () => {
                             />
                         </Form.Group>
                         <a href="/Register" className='small-form-group'>Don't have an account? Register here</a>
-                        <a href="/ResetPassword" className='small-form-group'>Forget password? Click here</a>
+                        <br></br>
+                        <a href="/ForgotPassword" className='small-form-group'>Forgot your password? Click here</a>
                     </Col>
                 </Row>
             </Form>
