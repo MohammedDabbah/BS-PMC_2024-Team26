@@ -57,10 +57,15 @@ pipeline {
             steps {
                 script {
                     dir('client') {
-                        // Ensure dependencies are installed
+                       // Check Node.js and npm versions
+                sh 'node -v'
+                sh 'npm -v'
 
-                        // Run unit tests
-                        sh 'npm test -- --coverage'
+                // Ensure dependencies are installed
+                sh 'npm install'
+
+                // Run unit tests
+                sh 'npm test -- --coverage'
                     }
                 }
             }
