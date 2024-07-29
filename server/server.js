@@ -4,10 +4,14 @@ const session = require('express-session');
 const passport = require('passport');
 const bodyParser = require('body-parser');
 const userModels = require('./mongodb');
-const { generateFourDigitCode, sendEmail} = require('./mail');
+const { generateFourDigitCode, sendEmail } = require('./mail');
+const axios = require('axios');
+
 const app = express();
 const port = 3001;
 const verificationCodes = {};
+
+const OPENAI_API_KEY = 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'; // Replace with your actual API key
 
 const corsOptions = {
   origin: "http://localhost:3000", // Replace with your frontend URL
@@ -39,7 +43,7 @@ passport.serializeUser((user, cb) => {
       fname: user.fname,
       lname: user.lname,
       role: user.role,
-      mail:user.mail,
+      mail: user.mail,
     });
   });
 });
@@ -56,93 +60,85 @@ passport.deserializeUser(async (user, cb) => {
   }
 });
 
-
-
-
-//Home
+// Home
 app.get('/', (req, res) => {
   res.send('Welcome to the backend server');
 });
 
-
-
 app.get('/Verification', async (req, res) => {
   try {
-      const { mail } = req.query;
-    
+    const { mail } = req.query;
 
-      if (!mail) {
-          return res.status(400).json({ message: "Email is required" });
-      }
+    if (!mail) {
+      return res.status(400).json({ message: "Email is required" });
+    }
 
-      const code = generateFourDigitCode();
-      verificationCodes[mail] = code;
-      console.log(`Generated code for ${mail}: ${code}`);
-      
-      await sendEmail(mail, 'Email Verification', `Your verification code: ${code}`);
-      res.status(200).send('Verification email sent');
+    const code = generateFourDigitCode();
+    verificationCodes[mail] = code;
+    console.log(`Generated code for ${mail}: ${code}`);
+
+    await sendEmail(mail, 'Email Verification', `Your verification code: ${code}`);
+    res.status(200).send('Verification email sent');
   } catch (err) {
-      console.error('Error in /Verification route:', err);
-      res.status(500).send('Failed to send verification email');
+    console.error('Error in /Verification route:', err);
+    res.status(500).send('Failed to send verification email');
   }
 });
 
-//Register
+// Register
 app.post('/Register', async (req, res) => {
   try {
-      const { fname, lname, username, mail, password, role, code } = req.body;
+    const { fname, lname, username, mail, password, role, code } = req.body;
 
-      if (!fname || !lname || !username || !mail || !password || !role || !code) {
-          return res.status(406).json({ message: "Please fill all the details" });
+    if (!fname || !lname || !username || !mail || !password || !role || !code) {
+      return res.status(406).json({ message: "Please fill all the details" });
+    }
+    if (!isValidEmail(mail)) {
+      return res.status(406).json({ message: "Please enter a valid email address" });
+    }
+
+    const existingUser = await findUserByUsername(username);
+    const existingEmail = await findUserByEmail(mail);
+
+    if (existingEmail) {
+      return res.status(406).json({ message: "Email address is already in use" });
+    }
+    if (existingUser) {
+      return res.status(406).json({ message: "Username is already taken" });
+    }
+    console.log(verificationCodes[mail], ' code:', code)
+    if (`${verificationCodes[mail]}` !== code) {
+      return res.status(406).json({ message: "Please enter a valid code" });
+    }
+
+    // Clear the used code
+    delete verificationCodes[mail];
+
+    const UserModel = userModels[role];
+    if (!UserModel) {
+      return res.status(400).json({ message: "Invalid role specified" });
+    }
+
+    UserModel.register({ fname, lname, username, mail, role }, password, (err, newUser) => {
+      if (err || !newUser) {
+        console.error('Error in registration:', err);
+        return res.status(500).json({ message: "Registration failed" });
       }
-      if (!isValidEmail(mail)) {
-          return res.status(406).json({ message: "Please enter a valid email address" });
-      }
 
-      const existingUser = await findUserByUsername(username);
-      const existingEmail = await findUserByEmail(mail);
-
-      if (existingEmail) {
-          return res.status(406).json({ message: "Email address is already in use" });
-      }
-      if (existingUser) {
-          return res.status(406).json({ message: "Username is already taken" });
-      }
-      console.log(verificationCodes[mail],' code:',code)
-      if (`${verificationCodes[mail]}` !== code) {
-          return res.status(406).json({ message: "Please enter a valid code" });
-      }
-
-      // Clear the used code
-      delete verificationCodes[mail];
-
-      const UserModel = userModels[role];
-      if (!UserModel) {
-          return res.status(400).json({ message: "Invalid role specified" });
-      }
-
-      UserModel.register({ fname, lname, username, mail, role }, password, (err, newUser) => {
-          if (err || !newUser) {
-              console.error('Error in registration:', err);
-              return res.status(500).json({ message: "Registration failed" });
-          }
-
-          req.login(newUser, (err) => {
-              if (err) {
-                  console.error('Error logging in after registration:', err);
-                  return res.status(500).json({ message: "Registration failed" });
-              }
-              return res.status(200).json({ message: "Registration successful", user: newUser });
-          });
+      req.login(newUser, (err) => {
+        if (err) {
+          console.error('Error logging in after registration:', err);
+          return res.status(500).json({ message: "Registration failed" });
+        }
+        return res.status(200).json({ message: "Registration successful", user: newUser });
       });
+    });
 
   } catch (err) {
-      console.error('Error in /Register route:', err);
-      return res.status(500).json({ message: "Registration failed" });
+    console.error('Error in /Register route:', err);
+    return res.status(500).json({ message: "Registration failed" });
   }
 });
-
-
 
 async function findUserByUsername(username) {
   return Promise.any(Object.values(userModels).map(model => model.findOne({ username })));
@@ -157,8 +153,7 @@ function isValidEmail(email) {
   return re.test(String(email).toLowerCase());
 }
 
-
-//Login
+// Login
 app.post('/login', (req, res, next) => {
   const { username, password, role } = req.body;
   const UserModel = userModels[role];
@@ -186,10 +181,7 @@ app.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 
-
-
-
-//Change password
+// Change password
 app.post('/ChangePassword', async (req, res) => {
   try {
     const { username, currentPassword, newPassword, role } = req.body;
@@ -228,21 +220,10 @@ app.post('/ChangePassword', async (req, res) => {
   }
 });
 
-
-
-
-
-
-
-
-
-
-
-
-//Forgot password
+// Forgot password
 app.post('/ForgotPassword', async (req, res) => {
   try {
-    const { username, mail,code,role,password } = req.body;
+    const { username, mail, code, role, password } = req.body;
 
     if (!username || !password || !mail || !role || !code) {
       return res.status(406).json({ message: "Please fill all the details" });
@@ -265,21 +246,18 @@ app.post('/ForgotPassword', async (req, res) => {
     // Remove the used verification code
     delete verificationCodes[mail];
 
-        existingUser.setPassword(password ,async (err) => {
-        if (err) {
-          return res.status(500).json("Error setting new password");
-        }
-        await existingUser.save();
-        return res.json("Password changed successfully");
-      });
+    existingUser.setPassword(password, async (err) => {
+      if (err) {
+        return res.status(500).json("Error setting new password");
+      }
+      await existingUser.save();
+      return res.json("Password changed successfully");
+    });
   } catch (err) {
     console.log(err);
     return res.status(500).json("Failed to change password");
   }
 });
-
-
-
 
 app.post('/logout', (req, res) => {
   req.logout((err) => {
@@ -296,14 +274,12 @@ app.post('/logout', (req, res) => {
   });
 });
 
-
-
 // Add this endpoint to check authentication status
 app.get('/authenticated', (req, res) => {
   console.log(req.user);
   console.log(req.isAuthenticated());
   if (req.isAuthenticated()) {
-    console.log('test-auth')
+    console.log('test-auth');
     return res.json({ user: req.user });
   }
   res.json({ user: null });
@@ -317,14 +293,27 @@ app.get('/profile', (req, res) => {
   }
 });
 
-
-
-
+// Add OpenAI endpoint
+app.post('/api/completions', async (req, res) => {
+  try {
+    const response = await axios.post('https://api.openai.com/v1/completions', {
+      prompt: req.body.prompt,
+      max_tokens: 150,
+      n: 1,
+      stop: null,
+      temperature: 0.7,
+    }, {
+      headers: {
+        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+      },
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error making API request:', error);
+    res.status(500).send('Error making API request');
+  }
+});
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
-
-
-
-
