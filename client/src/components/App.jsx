@@ -12,7 +12,7 @@ import PublicRoute from './PublicRoute';
 import ForgotPassword from './ForgotPassword';
 import Profile from './Profile';
 import ChangePassword from './ChangePassword';
-import TesterMessages from './TesterMessages';
+import Messages from './Messages';
 
 function App() {
   return (
@@ -28,7 +28,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/developer" element={<DeveloperPage />} />
             <Route path="/tester" element={<TesterPage />} />
-            <Route path="/testermessages" element={<TesterMessages />} />
+            <Route path="/messages" element={<Messages />} />
             <Route path="/manager" element={<ManagerPage />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/ChangePassword" element={<ChangePassword />} />
