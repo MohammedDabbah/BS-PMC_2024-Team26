@@ -325,6 +325,16 @@ app.get('/developers', async (req, res) => {
   }
 });
 
+app.get('/testers', async (req, res) => {
+  try {
+    const testers = await userModels.tester.find(); 
+    res.json(testers);
+  } catch (err) {
+    console.error('Error fetching testers:', err);
+    res.status(500).json({ message: 'Failed to fetch testers' });
+  }
+});
+
 
 
 

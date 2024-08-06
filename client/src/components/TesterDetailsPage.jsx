@@ -1,40 +1,41 @@
+
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Table from 'react-bootstrap/Table';
 import Header from "./Header";
-import Table from 'react-bootstrap/Table'; 
 
-function DeveloperDetailsPage() {
-  const [developers, setDevelopers] = useState([]);
+function TesterDetailsPage() {
+  const [testers, setTesters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchDevelopers = async () => {
+    const fetchTesters = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/developers', { withCredentials: true });
+        const response = await axios.get('http://localhost:3001/testers', { withCredentials: true });
         if (response.status === 200) {
-          setDevelopers(response.data);
+          setTesters(response.data);
         } else {
-          setError('Failed to fetch developers');
+          setError('Failed to fetch testers');
         }
       } catch (error) {
-        setError('Error fetching developers');
-        console.error('Error fetching developers:', error);
+        setError('Error fetching testers');
+        console.error('Error fetching testers:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchDevelopers();
+    fetchTesters();
   }, []);
 
   const handleGoBack = () => {
     navigate(-1); 
   };
 
-  if (loading) return <div>Loading</div>;
+  if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
   return (
@@ -51,13 +52,13 @@ function DeveloperDetailsPage() {
           </tr>
         </thead>
         <tbody>
-          {developers.map(developer => (
-            <tr key={developer._id}>
-              <td>{developer.fname}</td>
-              <td>{developer.lname}</td>
-              <td>{developer.username}</td>
-              <td>{developer.mail}</td>
-              <td>{developer.role}</td>
+          {testers.map(tester => (
+            <tr key={tester._id}>
+              <td>{tester.fname}</td>
+              <td>{tester.lname}</td>
+              <td>{tester.username}</td>
+              <td>{tester.mail}</td>
+              <td>{tester.role}</td>
             </tr>
           ))}
         </tbody>
@@ -67,4 +68,4 @@ function DeveloperDetailsPage() {
   );
 }
 
-export default DeveloperDetailsPage;
+export default TesterDetailsPage;

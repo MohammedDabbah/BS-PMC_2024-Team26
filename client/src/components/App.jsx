@@ -14,6 +14,7 @@ import Profile from './Profile';
 import ChangePassword from './ChangePassword';
 import Messages from './Messages';
 import DeveloperDetailsPage from './DeveloperDetailsPage';
+import TesterDetailsPage from './TesterDetailsPage';
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/ChangePassword" element={<ChangePassword />} />
             <Route path="/developerdeta" element={<DeveloperDetailsPage />} />
+            <Route path="/testerdeta" element={<TesterDetailsPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
