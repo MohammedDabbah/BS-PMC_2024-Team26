@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Header from './Header';
+import { useNavigate } from 'react-router-dom';
 
 const DeveloperPage = () => {
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState([]);
+    const navigate = useNavigate();
+
+    
+    
+    
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -27,10 +33,20 @@ const DeveloperPage = () => {
 
         setInput('');
     };
+    const handleViewTesterDetails = () => {
+        navigate('/testerdeta');
+      };
+     
+   
+
 
     return (
         <div>
+            
             <Header />
+            <button onClick={handleViewTesterDetails} className='btn btn-primary'>
+      View Tester Details
+    </button>
             <div style={{ margin: '20px', textAlign: 'center' }}>
                 <h1>Chat with GPT-3</h1>
                 <div style={{ maxHeight: '400px', overflowY: 'auto', marginBottom: '20px', border: '1px solid #ccc', padding: '10px' }}>
@@ -54,6 +70,7 @@ const DeveloperPage = () => {
                     <button type="submit" style={{ padding: '10px', width: '18%' }}>Send</button>
                 </form>
             </div>
+      
         </div>
     );
 };
