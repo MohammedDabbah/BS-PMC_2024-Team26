@@ -13,6 +13,7 @@ import ForgotPassword from './ForgotPassword';
 import Profile from './Profile';
 import ChangePassword from './ChangePassword';
 import Messages from './Messages';
+import DeveloperDetailsPage from './DeveloperDetailsPage';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
             <Route path="/manager" element={<ManagerPage />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/ChangePassword" element={<ChangePassword />} />
+            <Route path="/developerdeta" element={<DeveloperDetailsPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

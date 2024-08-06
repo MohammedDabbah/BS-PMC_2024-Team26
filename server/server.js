@@ -314,6 +314,20 @@ app.post('/api/completions', async (req, res) => {
   }
 });
 
+app.get('/developers', async (req, res) => {
+  try {
+    
+    const developers = await userModels.developer.find(); 
+    res.json(developers);
+  } catch (err) {
+    console.error('Error fetching developers:', err);
+    res.status(500).json({ message: 'Failed to fetch developers' });
+  }
+});
+
+
+
+
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
