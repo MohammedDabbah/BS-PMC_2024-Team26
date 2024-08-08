@@ -7,6 +7,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Header from './Header';
 import Footer from './Footer';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -50,65 +51,102 @@ const Login = () => {
         }
     };
 
+    const handleHome = () => {
+        console.log("Navigating to Home");
+        navigate('/Home');
+    };
+
     return (
-        <div>
-            <Form onSubmit={handleLogin} className='small-form-group'>
-                <h2 style={{ textAlign: "center" }}>Login</h2>
-                <Row>
-                    <Col md={12}>
-                        <Form.Group className="mb-3" controlId="formUsername">
-                            <Form.Control
-                                type='text'
-                                className='small-form-group'
-                                value={username}
-                                placeholder='Username'
-                                onChange={(e) => setUsername(e.target.value)}
-                                required
-                            />
-                        </Form.Group>
-                    </Col>
-                    <Col md={12}>
-                        <Form.Group className="mb-3" controlId="formPassword">
-                            <Form.Control
-                                type='password'
-                                className='small-form-group'
-                                value={password}
-                                placeholder='Password'
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                            />
-                        </Form.Group>
-                    </Col>
-                    <Col md={12}>
-                        <Form.Group className="mb-3" controlId="formRole">
-                            <Form.Label>Role</Form.Label>
-                            <Form.Control
-                                as="select"
-                                className='small-form-group'
-                                value={role}
-                                onChange={(e) => setRole(e.target.value)}
-                                required
-                            >
-                                <option value="developer">Developer</option>
-                                <option value="manager">Manager</option>
-                                <option value="tester">Tester</option>
-                            </Form.Control>
-                        </Form.Group>
-                    </Col>
-                    <Col md={12}>
-                        <Form.Group className="mb-3 small-form-group" controlId="formSubmit">
-                            <Form.Control
-                                type='submit'
-                                value='Login'
-                            />
-                        </Form.Group>
-                        <a href="/Register" className='small-form-group'>Don't have an account? Register here</a>
-                        <br></br>
-                        <a href="/ForgotPassword" className='small-form-group'>Forgot your password? Click here</a>
-                    </Col>
-                </Row>
-            </Form>
-            <Footer />
+        <div style={{
+            backgroundImage: 'url(https://img.freepik.com/free-vector/laptop-with-program-code-isometric-icon-software-development-programming-applications-dark-neon_39422-971.jpg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            height: '100vh',
+            width: '100vw',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            textAlign: 'center',
+            color: '#fff', // White text color for contrast
+        }}>
+            <div style={{ marginTop: "8rem" }}>
+                <button
+                    className="btn btn-secondary"
+                    onClick={handleHome}
+                    style={{
+                        position: 'absolute',
+                        top: '10px',
+                        left: '10px',
+                        zIndex: 1000, // Ensures the button stays on top of other elements
+                    }}
+                >
+                    <ArrowBackIcon style={{ marginRight: '0.5rem' }} />
+                    Back
+                </button>
+
+                <Form onSubmit={handleLogin} className='small-form-group'>
+                    <h2 style={{ textAlign: "center" }}>Login</h2>
+                    <Row>
+                        <Col md={12}>
+                            <Form.Group className="mb-3" controlId="formUsername">
+                                <Form.Control
+                                    type='text'
+                                    className='small-form-group'
+                                    value={username}
+                                    placeholder='Username'
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    required
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col md={12}>
+                            <Form.Group className="mb-3" controlId="formPassword">
+                                <Form.Control
+                                    type='password'
+                                    className='small-form-group'
+                                    value={password}
+                                    placeholder='Password'
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col md={12}>
+                            <Form.Group className="mb-3" controlId="formRole">
+                                <Form.Label>Role</Form.Label>
+                                <Form.Control
+                                    as="select"
+                                    className='small-form-group'
+                                    value={role}
+                                    onChange={(e) => setRole(e.target.value)}
+                                    required
+                                >
+                                    <option value="developer">Developer</option>
+                                    <option value="manager">Manager</option>
+                                    <option value="tester">Tester</option>
+                                </Form.Control>
+                            </Form.Group>
+                        </Col>
+                        <Col md={12}>
+                            <Form.Group className="mb-3 small-form-group" controlId="formSubmit">
+                                <Form.Control
+                                    type='submit'
+                                    value='Login'
+                                />
+                            </Form.Group>
+                            <a className='btn btn-dark' href="/Register">
+                                Don't have an account? Register here
+                            </a>
+                            <br></br>
+                            <a className='btn btn-dark' href="/ForgotPassword" style={{ marginTop: '0.5rem' }}>
+                                Forgot your password? click here
+                            </a>
+                        </Col>
+                    </Row>
+                </Form>
+
+            </div>
         </div>
     );
 }
