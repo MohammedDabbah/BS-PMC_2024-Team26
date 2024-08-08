@@ -7,6 +7,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Header from './Header';
 import Footer from './Footer';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -50,8 +51,27 @@ const Login = () => {
         }
     };
 
+    const handleHome = () => {
+        console.log("Navigating to Home");
+        navigate('/Home');
+    };
+
     return (
-        <div>
+        <div style={{ marginTop: "8rem" }}>
+            <button
+                className="btn btn-secondary"
+                onClick={handleHome}
+                style={{
+                    position: 'absolute',
+                    top: '10px',
+                    left: '10px',
+                    zIndex: 1000, // Ensures the button stays on top of other elements
+                }}
+            >
+                <ArrowBackIcon style={{ marginRight: '0.5rem' }} />
+                Back
+            </button>
+
             <Form onSubmit={handleLogin} className='small-form-group'>
                 <h2 style={{ textAlign: "center" }}>Login</h2>
                 <Row>
@@ -108,7 +128,7 @@ const Login = () => {
                     </Col>
                 </Row>
             </Form>
-            <Footer />
+
         </div>
     );
 }
