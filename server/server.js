@@ -335,6 +335,51 @@ app.get('/testers', async (req, res) => {
   }
 });
 
+app.post('/updates', async (req, res) => {
+  try {
+    const { data, sign, fname, lname, code, email } = req.body;
+    console.log(sign)
+    const UserModel = userModels[data.role];
+
+    if (!UserModel) {
+      return res.status(400).json({ message: "Invalid role specified" });
+    }
+
+    const us = data.username;
+    const existingUser = await UserModel.findOne({ username: us });
+
+    if (!existingUser) {
+      return res.status(406).json({ message: "Username not found" });
+    }
+
+    if (sign === "nameEdit") {
+      existingUser.fname = fname;
+      existingUser.lname = lname;
+      await existingUser.save(); // Make sure to await the save operation
+      return res.status(200).json({ message: "Name updated successfully" });
+
+    } else if (sign === "emailEdit") {
+      if (!verificationCodes[email] || `${verificationCodes[email]}` !== code) {
+        return res.status(400).json({ message: "Invalid or expired verification code" });
+      }
+      existingUser.mail = email;
+      await existingUser.save(); // Make sure to await the save operation
+
+      // Remove the used verification code
+      delete verificationCodes[email];
+
+      return res.status(200).json({ message: "Email updated successfully" });
+
+    } else {
+      return res.status(400).json({ message: "Invalid update type specified" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
+
+
 
 app.post('/send-feedback', async (req, res) => {
     const { feedback } = req.body;

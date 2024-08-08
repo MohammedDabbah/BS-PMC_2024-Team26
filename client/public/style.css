@@ -1,4 +1,5 @@
 .small-form-group {
+<<<<<<< HEAD
   max-width: 300px;
   /* Adjust the max-width as needed */
   margin: 0 auto;
@@ -35,4 +36,46 @@ img {
 .error-message {
   margin-left: 850px;
   /* Adjust this value to move the error message more to the right */
+=======
+    max-width: 300px; /* Adjust the max-width as needed */
+    margin: 0 auto; /* Center the form group */
+    margin-top: 0.2rem;
+  }
+  img{
+    width: 40rem;
+    height: 20rem;
+    border-radius: 100%;
+  }
+  .profile{
+    /* max-width: 300px; Adjust the max-width as needed */
+    margin: 0 auto; /* Center the form group */
+    margin-top: 1rem;
+    /* margin-right:2rem; */
+  }
+  .bt{
+    border: none !important;
+    outline: none !important;
+  }
+  .proP {
+    /* Uncomment if needed */
+    /* background-color: #E4E9FD; */
+    /* background-image: -webkit-linear-gradient(65deg, #0E46A3 30%, #9AC8CD 50%); */
+    background-image: url('https://img.freepik.com/free-vector/laptop-with-program-code-isometric-icon-software-development-programming-applications-dark-neon_39422-971.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: #fff; /* White text color for contrast */
+    min-height: 50rem;
+    font-family: 'Helvetica Neue', sans-serif;
+  }
+  
+  .error-message {
+    margin-left: 850px; /* Adjust this value to move the error message more to the right */
+>>>>>>> Dabbah
 }
