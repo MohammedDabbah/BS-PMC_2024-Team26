@@ -1,5 +1,4 @@
 .small-form-group {
-<<<<<<< HEAD
   max-width: 300px;
   /* Adjust the max-width as needed */
   margin: 0 auto;
@@ -36,7 +35,6 @@ img {
 .error-message {
   margin-left: 850px;
   /* Adjust this value to move the error message more to the right */
-=======
     max-width: 300px; /* Adjust the max-width as needed */
     margin: 0 auto; /* Center the form group */
     margin-top: 0.2rem;
@@ -77,5 +75,4 @@ img {
   
   .error-message {
     margin-left: 850px; /* Adjust this value to move the error message more to the right */
->>>>>>> Dabbah
 }
