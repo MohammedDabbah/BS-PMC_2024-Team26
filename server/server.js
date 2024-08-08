@@ -336,6 +336,22 @@ app.get('/testers', async (req, res) => {
 });
 
 
+app.post('/send-feedback', async (req, res) => {
+    const { feedback } = req.body;
+
+    try {
+      await sendEmail('hosni.1gh@gmail.com', 'Feedback', feedback);
+      res.status(200).send({ message: 'Feedback sent successfully' });
+  } catch (error) {
+      console.error('Error sending feedback:', error);
+      res.status(500).send({ message: 'Failed to send feedback' });
+  }
+    
+});
+
+
+
+
 
 
 app.listen(port, () => {
