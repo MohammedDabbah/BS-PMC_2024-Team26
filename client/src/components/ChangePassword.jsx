@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Header from "./Header";
 import Footer from "./Footer";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function ChangePassword() {
+    const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
@@ -37,77 +40,109 @@ function ChangePassword() {
             console.error('There was an error resetting the password!', error);
         }
     };
+    const handleProfile = () => {
+        console.log("Navigating to profile");
+        navigate('/profile');
+    };
 
     return (
-        <div>
-            <Form onSubmit={handleSubmit} className="mb-3">
-                <h2 style={{ marginLeft: '0.5rem', marginTop: "1rem", fontStyle: 'oblique', fontFamily: 'monospace', textDecorationLine: ' overline' }}>Password reset</h2>
-                <Row>
-                    <Col md={12}>
-                        <Form.Group className="mb-3 small-form-group" controlId="formUsername">
-                            <Form.Label>Username</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Username"
-                                value={username}
-                                onChange={(event) => setUsername(event.target.value)}
-                            />
-                        </Form.Group>
-                    </Col>
-                    <Col md={12}>
-                        <Form.Group className="mb-3 small-form-group" controlId="formCurrentPassword">
-                            <Form.Label>Current Password</Form.Label>
-                            <Form.Control
-                                type="password"
-                                placeholder="Current Password"
-                                value={currentPassword}
-                                onChange={(event) => setCurrentPassword(event.target.value)}
-                            />
-                        </Form.Group>
-                    </Col>
-                    <Col md={12}>
-                        <Form.Group className="mb-3 small-form-group" controlId="formNewPassword">
-                            <Form.Label>New Password</Form.Label>
-                            <Form.Control
-                                type="password"
-                                placeholder="New Password"
-                                value={newPassword}
-                                onChange={(event) => setNewPassword(event.target.value)}
-                            />
-                        </Form.Group>
-                    </Col>
-                    <Col md={12}>
-                        <Form.Group className="mb-3 small-form-group" controlId="formConfirmNewPassword">
-                            <Form.Label>Confirm New Password</Form.Label>
-                            <Form.Control
-                                type="password"
-                                placeholder="Confirm New Password"
-                                value={confirmNewPassword}
-                                onChange={(event) => setConfirmNewPassword(event.target.value)}
-                            />
-                        </Form.Group>
-                    </Col>
-                    <Col md={12}>
-                        <Form.Group className="mb-3 small-form-group" controlId="formRole">
-                            <Form.Label>Role</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Role (developer, manager, tester)"
-                                value={role}
-                                onChange={(event) => setRole(event.target.value)}
-                            />
-                        </Form.Group>
-                    </Col>
-                    {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-                    {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
-                    <Col md={12}>
-                        <Form.Group className="mb-3 small-form-group" controlId="formSubmit">
-                            <Form.Control type="submit" value="Reset Password" />
-                        </Form.Group>
-                    </Col>
-                </Row>
-                <img src="https://t4.ftcdn.net/jpg/00/84/41/47/360_F_84414732_yINLjwPITwl6YqR4mkmGQkjH36ns2MXr.jpg" style={{ width: "25rem", marginLeft: '5rem' }}></img>
-            </Form>
+        <div style={{
+            backgroundImage: 'url(https://img.freepik.com/free-vector/laptop-with-program-code-isometric-icon-software-development-programming-applications-dark-neon_39422-971.jpg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            height: '100vh',
+            width: '100vw',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            textAlign: 'center',
+            color: '#fff', // White text color for contrast
+        }}>
+            < div >
+                <div style={{ marginTop: "8rem" }}>
+                    <button
+                        className="btn btn-secondary"
+                        onClick={handleProfile}
+                        style={{
+                            position: 'absolute',
+                            top: '10px',
+                            left: '10px',
+                            zIndex: 1000, // Ensures the button stays on top of other elements
+                        }}
+                    >
+                        <ArrowBackIcon style={{ marginRight: '0.5rem' }} />
+                        Back
+                    </button>
+                    <Form onSubmit={handleSubmit} className="mb-3">
+                        <h2 style={{ marginLeft: '0.5rem', marginTop: "1rem", fontStyle: 'oblique', fontFamily: 'monospace', textDecorationLine: ' overline' }}>Password reset</h2>
+                        <Row>
+                            <Col md={12}>
+                                <Form.Group className="mb-3 small-form-group" controlId="formUsername">
+                                    <Form.Label>Username</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Username"
+                                        value={username}
+                                        onChange={(event) => setUsername(event.target.value)}
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col md={12}>
+                                <Form.Group className="mb-3 small-form-group" controlId="formCurrentPassword">
+                                    <Form.Label>Current Password</Form.Label>
+                                    <Form.Control
+                                        type="password"
+                                        placeholder="Current Password"
+                                        value={currentPassword}
+                                        onChange={(event) => setCurrentPassword(event.target.value)}
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col md={12}>
+                                <Form.Group className="mb-3 small-form-group" controlId="formNewPassword">
+                                    <Form.Label>New Password</Form.Label>
+                                    <Form.Control
+                                        type="password"
+                                        placeholder="New Password"
+                                        value={newPassword}
+                                        onChange={(event) => setNewPassword(event.target.value)}
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col md={12}>
+                                <Form.Group className="mb-3 small-form-group" controlId="formConfirmNewPassword">
+                                    <Form.Label>Confirm New Password</Form.Label>
+                                    <Form.Control
+                                        type="password"
+                                        placeholder="Confirm New Password"
+                                        value={confirmNewPassword}
+                                        onChange={(event) => setConfirmNewPassword(event.target.value)}
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col md={12}>
+                                <Form.Group className="mb-3 small-form-group" controlId="formRole">
+                                    <Form.Label>Role</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Role (developer, manager, tester)"
+                                        value={role}
+                                        onChange={(event) => setRole(event.target.value)}
+                                    />
+                                </Form.Group>
+                            </Col>
+                            {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+                            {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
+                            <Col md={12}>
+                                <Form.Group className="mb-3 small-form-group" controlId="formSubmit">
+                                    <Form.Control type="submit" value="Reset Password" />
+                                </Form.Group>
+                            </Col>
+                        </Row>
+                    </Form>
+                </ div>
+            </div>
         </div>
     );
 };
