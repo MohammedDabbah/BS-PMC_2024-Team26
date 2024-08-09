@@ -16,7 +16,7 @@ import Messages from './Messages';
 import DeveloperDetailsPage from './DeveloperDetailsPage';
 import TesterDetailsPage from './TesterDetailsPage';
 import Feedback from './Feedback';
-
+import AboutUs from './AboutUs';
 function App() {
   return (
     <AuthProvider>
@@ -28,6 +28,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/ForgotPassword" element={<ForgotPassword />} />
             <Route path="/feedback" element={<Feedback />} />
+            <Route path="/aboutus" element={<AboutUs />} />
+
           </Route>
           <Route element={<ProtectedRoute />}>
             <Route path="/developer" element={<DeveloperPage />} />
