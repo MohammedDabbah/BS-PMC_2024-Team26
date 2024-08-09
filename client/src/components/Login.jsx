@@ -53,7 +53,7 @@ const Login = () => {
 
     const handleHome = () => {
         console.log("Navigating to Home");
-        navigate('/Home');
+        navigate('/');
     };
 
     return (

@@ -222,8 +222,8 @@ function Profile() {
             </Dropdown.Toggle>
             <Dropdown.Menu>
               <Dropdown.Item href="/ChangePassword">Change Password</Dropdown.Item>
-              <Dropdown.Item onClick={() => { setFlag(true); setSign('nameEdit'); }}>Edit name</Dropdown.Item>
-              <Dropdown.Item onClick={() => { setFlag(true); setSign('emailEdit'); }}>Change email</Dropdown.Item>
+              <Dropdown.Item onClick={() => { setFlag(true); setSign('nameEdit'); }} data-testid="edit-name">Edit name</Dropdown.Item>
+              <Dropdown.Item onClick={() => { setFlag(true); setSign('emailEdit'); }} data-testid="change-email">Change email</Dropdown.Item>
             </Dropdown.Menu>
             <button onClick={handleGoBack} className="btn bt">
             Back <UndoIcon />

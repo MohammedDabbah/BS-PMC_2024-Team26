@@ -4,8 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Header from './Header';
-import CheckIcon from '@mui/icons-material/Check';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const Register = () => {
@@ -110,7 +108,7 @@ const Register = () => {
 
   const handleHome = () => {
     console.log("Navigating to Home");
-    navigate('/Home');
+    navigate('/');
   };
 
   return (
