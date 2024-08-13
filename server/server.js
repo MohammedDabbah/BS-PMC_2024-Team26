@@ -6,12 +6,17 @@ const bodyParser = require('body-parser');
 const userModels = require('./mongodb');
 const { generateFourDigitCode, sendEmail } = require('./mail');
 const axios = require('axios');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const ChatHistory = require('./chatHistory');
 
 const app = express();
 const port = 3001;
 const verificationCodes = {};
 
-const OPENAI_API_KEY = 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'; // Replace with your actual API key
+//gemini api key
+const genAI = new GoogleGenerativeAI('AIzaSyASYsdxhia1V5IDaCtby8OlQOcKLlqPVi4');
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const GEMINI_API_KEY = 'AIzaSyASYsdxhia1V5IDaCtby8OlQOcKLlqPVi4'; // Replace with your actual Gemini API key
 
 const corsOptions = {
   origin: "http://localhost:3000", // Replace with your frontend URL
@@ -316,8 +321,8 @@ app.post('/api/completions', async (req, res) => {
 
 app.get('/developers', async (req, res) => {
   try {
-    
-    const developers = await userModels.developer.find(); 
+
+    const developers = await userModels.developer.find();
     res.json(developers);
   } catch (err) {
     console.error('Error fetching developers:', err);
@@ -327,7 +332,7 @@ app.get('/developers', async (req, res) => {
 
 app.get('/testers', async (req, res) => {
   try {
-    const testers = await userModels.tester.find(); 
+    const testers = await userModels.tester.find();
     res.json(testers);
   } catch (err) {
     console.error('Error fetching testers:', err);
@@ -382,18 +387,39 @@ app.post('/updates', async (req, res) => {
 
 
 app.post('/send-feedback', async (req, res) => {
-    const { feedback } = req.body;
+  const { feedback } = req.body;
 
-    try {
-      await sendEmail('hosni.1gh@gmail.com', 'Feedback', feedback);
-      res.status(200).send({ message: 'Feedback sent successfully' });
+  try {
+    await sendEmail('hosni.1gh@gmail.com', 'Feedback', feedback);
+    res.status(200).send({ message: 'Feedback sent successfully' });
   } catch (error) {
-      console.error('Error sending feedback:', error);
-      res.status(500).send({ message: 'Failed to send feedback' });
+    console.error('Error sending feedback:', error);
+    res.status(500).send({ message: 'Failed to send feedback' });
   }
-    
+
 });
 
+
+
+// Add Gemini AI API interaction
+app.post('/api/gemini-completions', async (req, res) => {
+  try {
+    const chat = model.startChat({
+      history: [
+        {
+          role: "user",
+          parts: [{ text: req.body.prompt }],
+        },
+      ],
+    });
+
+    const result = await chat.sendMessage(req.body.prompt);
+    res.json({ response: result.response.text() });
+  } catch (error) {
+    console.error("Error making API request:", error);
+    res.status(500).json({ error: "An error occurred." });
+  }
+});
 
 
 
