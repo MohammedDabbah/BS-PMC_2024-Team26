@@ -14,9 +14,9 @@ const port = 3001;
 const verificationCodes = {};
 
 //gemini api key
-const genAI = new GoogleGenerativeAI('AIzaSyASYsdxhia1V5IDaCtby8OlQOcKLlqPVi4');
+const genAI = new GoogleGenerativeAI('AIzaSyDaoqMCMzg5tfrTIlxQSO4kCqi2biKqis8');
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-const GEMINI_API_KEY = 'AIzaSyASYsdxhia1V5IDaCtby8OlQOcKLlqPVi4'; // Replace with your actual Gemini API key
+const GEMINI_API_KEY = 'AIzaSyDaoqMCMzg5tfrTIlxQSO4kCqi2biKqis8'; // Replace with your actual Gemini API key
 
 const corsOptions = {
   origin: "http://localhost:3000", // Replace with your frontend URL
