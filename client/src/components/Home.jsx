@@ -9,6 +9,10 @@ function Home() {
         navigate('/feedback');
     };
 
+    const handleAboutUsClick = () => {
+        navigate('/AboutUs');
+    };
+
     return (
         <div style={{
             backgroundImage: 'url(https://img.freepik.com/free-vector/laptop-with-program-code-isometric-icon-software-development-programming-applications-dark-neon_39422-971.jpg)',
@@ -56,14 +60,24 @@ function Home() {
                 width: '100%',
                 textAlign: 'center',
                 padding: '10px',
-               
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '10px', // Add space between the buttons
             }}>
                 <button
                     onClick={handleFeedbackClick}
-                   className='btn bt'
-                   style={{color:'white'}}
+                    className='btn bt'
+                    style={{color:'white'}}
                 >
                     Go to Feedback
+                </button>
+                <button
+                    onClick={handleAboutUsClick}
+                    className='btn bt'
+                    style={{color:'white'}}
+                >
+                    About Us
                 </button>
             </footer>
         </div>

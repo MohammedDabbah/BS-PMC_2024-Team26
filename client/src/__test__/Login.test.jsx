@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter,useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Login from '../components/Login';
 import '@testing-library/jest-dom';
@@ -8,6 +8,12 @@ import { AuthProvider } from '../components/AuthContext';
 
 // Mock Axios
 jest.mock('axios');
+
+// Mock useNavigate
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useNavigate: jest.fn(),
+  }));
 
 // Mock window.alert
 window.alert = jest.fn();
@@ -85,4 +91,22 @@ describe('Login Component', () => {
             expect(window.alert).toHaveBeenCalledWith('Login failed');
         });
     });
+    test('navigates to Home page when Back button is clicked', () => {
+        const navigate = jest.fn();
+        useNavigate.mockReturnValue(navigate);
+    
+        render(
+            <MemoryRouter>
+            <AuthProvider>
+                <Login />
+            </AuthProvider>
+        </MemoryRouter>
+        );
+    
+        // Click the Back button
+        fireEvent.click(screen.getByRole('button', { name: /Back/i }));
+    
+        // Assert navigation
+        expect(navigate).toHaveBeenCalledWith('/');
+      });
 });

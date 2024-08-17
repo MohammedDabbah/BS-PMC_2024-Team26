@@ -4,8 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Header from './Header';
-import CheckIcon from '@mui/icons-material/Check';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const Register = () => {
@@ -110,10 +108,27 @@ const Register = () => {
 
   const handleHome = () => {
     console.log("Navigating to Home");
-    navigate('/Home');
+    navigate('/');
   };
 
   return (
+
+
+
+    <div style={{
+      backgroundImage: 'url(https://img.freepik.com/free-vector/laptop-with-program-code-isometric-icon-software-development-programming-applications-dark-neon_39422-971.jpg)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      height: '100vh',
+      width: '100vw',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      textAlign: 'center',
+      color: '#fff', // White text color for contrast
+  }}>
+
     <div>
       <div style={{ marginTop: "8rem" }}>
         <button
@@ -281,6 +296,7 @@ const Register = () => {
           </div>
         </Form>
       </div>
+    </div>
     </div>
   );
 };
