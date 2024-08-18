@@ -1,66 +1,63 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Header from './Header';
 
 const TesterPage = () => {
-    const [input, setInput] = useState('');
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState(() => {
+        // Load messages from localStorage when the component initializes
+        const savedMessages = localStorage.getItem('chatMessages');
+        return savedMessages ? JSON.parse(savedMessages) : [];
+    });
 
-    const handleSubmit = async (event) => {
+    // Save messages to localStorage whenever they change
+    useEffect(() => {
+        localStorage.setItem('chatMessages', JSON.stringify(messages));
+    }, [messages]);
+
+    const handleSendMessage = async (event) => {
         event.preventDefault();
+        const messageInput = event.target.elements.message;
+        const userMessage = messageInput.value.trim();
 
-        if (input.trim() === '') return;
+        if (userMessage) {
+            const updatedMessages = [...messages, { role: 'user', content: userMessage }];
+            setMessages(updatedMessages);
 
-        const newMessage = { text: input, sender: 'user' };
-        setMessages([...messages, newMessage]);
+            // Clear the input box after sending a message
+            messageInput.value = '';
 
-        try {
-            const response = await axios.post('http://localhost:3001/api/completions', {
-                prompt: input,
-            });
+            try {
+                // Send the user's message to the AI and get the response
+                const response = await axios.post('http://localhost:3001/api/gemini-completions', {
+                    prompt: userMessage,
+                });
 
-            const aiMessage = { text: response.data.choices[0].text.trim(), sender: 'ai' };
-            setMessages([...messages, newMessage, aiMessage]);
-        } catch (error) {
-            console.error('Error getting response from AI:', error);
+                const aiMessage = response.data.response;
+                setMessages((prevMessages) => [...prevMessages, { role: 'ai', content: aiMessage }]);
+            } catch (error) {
+                console.error('Error sending message to AI:', error);
+                setMessages((prevMessages) => [...prevMessages, { role: 'system', content: 'Error: Could not retrieve AI response.' }]);
+            }
         }
-
-        setInput('');
     };
 
     return (
         <div>
             <Header />
-            <div style={{ margin: '20px', textAlign: 'center' }}>
-                <h1>Chat with GPT-3</h1>
-                <div style={{ maxHeight: '400px', overflowY: 'auto', marginBottom: '20px', border: '1px solid #ccc', padding: '10px' }}>
-                    {messages.length === 0 && <p>No messages yet!</p>}
-                    {messages.map((message, index) => (
-                        <div key={index} style={{ textAlign: message.sender === 'user' ? 'right' : 'left', margin: '10px 0' }}>
-                            <span style={{ background: message.sender === 'user' ? '#d1e7dd' : '#f8d7da', padding: '10px', borderRadius: '5px' }}>
-                                {message.text}
-                            </span>
-                        </div>
-                    ))}
-                </div>
-                <form onSubmit={handleSubmit}>
-                    <input
-                        type="text"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        placeholder="Type a message"
-                        style={{ padding: '10px', width: '80%' }}
-                    />
-                    <button type="submit" style={{ padding: '10px', width: '18%' }}>Send</button>
-                </form>
+            <h2>Chat</h2>
+            <div style={{ border: '1px solid #ccc', padding: '10px', height: '300px', overflowY: 'scroll' }}>
+                {messages.map((message, index) => (
+                    <div key={index} style={{ margin: '5px 0' }}>
+                        <strong>{message.role === 'user' ? 'You' : 'AI'}:</strong> {message.content}
+                    </div>
+                ))}
             </div>
+            <form onSubmit={handleSendMessage}>
+                <input type="text" name="message" placeholder="Type your message..." required />
+                <button type="submit">Send</button>
+            </form>
         </div>
     );
 };
 
 export default TesterPage;
-
-
-
-//Rasheed
-//Abuammar231!
