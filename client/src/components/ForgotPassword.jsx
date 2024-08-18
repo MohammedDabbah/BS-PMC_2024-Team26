@@ -98,19 +98,7 @@ const ForgotPassword = () => {
     };
 
     return (
-        <div style={{
-            backgroundImage: 'url(https://img.freepik.com/free-vector/laptop-with-program-code-isometric-icon-software-development-programming-applications-dark-neon_39422-971.jpg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            height: '100vh',
-            width: '100vw',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            textAlign: 'center',
-            color: '#fff',
-        }}>
+        <div className='backG'>
             <div style={{ marginTop: "8rem" }}>
                 <Form onSubmit={handleSubmit} className='small-form-group'>
                     <h2 style={{ textAlign: "center" }}>Reset your password</h2>

@@ -44,7 +44,7 @@ const LoggedHeader = () => {
       <button onClick={handleLogout} className='btn btn-danger me-2'>
         Logout
       </button>
-      <button type="button" class="btn btn-outline-success me-2" onClick={handleTesterMessages}>
+      <button type="button" className="btn btn-outline-success me-2" onClick={handleTesterMessages}>
         <Email style={{ marginRight: '0.5rem' }} />
         Messages
       </button>

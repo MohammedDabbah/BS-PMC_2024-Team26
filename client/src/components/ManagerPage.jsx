@@ -2,6 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
+import AI_assistant from './AI_assistant';
 
 const ManagerPage = () => {
   const navigate = useNavigate();
@@ -15,15 +16,21 @@ const ManagerPage = () => {
   };
 
   return (
-    <div>
-      <Header />
-      <h2>Manager Page</h2>
-      <button onClick={handleViewDeveloperDetails} className='btn btn-primary'>
+    <div className='primaryPage'>
+    <div style={{ display: "flex", justifyContent: "center" }}>
+        <Header />
+    </div>
+      <button onClick={handleViewDeveloperDetails} 
+       className='btn view-details-btn' 
+       style={{ margin: '1rem', color: "white", textDecoration: "underline" }}>
         View Developer Details
       </button>
-      <button onClick={handleViewTesterDetails} className='btn btn-primary'>
+      <button onClick={handleViewTesterDetails}  className='btn view-details-btn' 
+       style={{ margin: '1rem', color: "white", textDecoration: "underline" }}>
         View Tester Details
       </button>
+
+      <AI_assistant />
     </div>
   );
 };

@@ -14,19 +14,7 @@ function Home() {
     };
 
     return (
-        <div style={{
-            backgroundImage: 'url(https://img.freepik.com/free-vector/laptop-with-program-code-isometric-icon-software-development-programming-applications-dark-neon_39422-971.jpg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            height: '100vh',
-            width: '100vw',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            textAlign: 'center',
-            color: '#fff', 
-        }}>
+        <div className='backG'>
             <Header logout={true} />
             <div style={{
                 display: 'flex',

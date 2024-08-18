@@ -9,14 +9,16 @@ const axios = require('axios');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const ChatHistory = require('./chatHistory');
 
+
 const app = express();
 const port = 3001;
 const verificationCodes = {};
 
-//gemini api key
-const genAI = new GoogleGenerativeAI('AIzaSyDaoqMCMzg5tfrTIlxQSO4kCqi2biKqis8');
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-const GEMINI_API_KEY = 'AIzaSyDaoqMCMzg5tfrTIlxQSO4kCqi2biKqis8'; // Replace with your actual Gemini API key
+
+// const AI_API_KEY = 'f20b25eca0c841748d045c9695870a32';
+// const genAI = new GoogleGenerativeAI('AIzaSyDaoqMCMzg5tfrTIlxQSO4kCqi2biKqis8');
+// const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+// const API_KEY = 'AIzaSyDaoqMCMzg5tfrTIlxQSO4kCqi2biKqis8'; // Replace with your actual Gemini API key
 
 const corsOptions = {
   origin: "http://localhost:3000", // Replace with your frontend URL
@@ -49,6 +51,8 @@ passport.serializeUser((user, cb) => {
       lname: user.lname,
       role: user.role,
       mail: user.mail,
+      userInput:[],
+      chatRes:[],
     });
   });
 });
@@ -300,24 +304,41 @@ app.get('/profile', (req, res) => {
 
 // Add OpenAI endpoint
 app.post('/api/completions', async (req, res) => {
+  const { prompt } = req.body;
+
+  if (!prompt) {
+    return res.status(400).json({ message: 'Prompt is required' });
+  }
   try {
-    const response = await axios.post('https://api.openai.com/v1/completions', {
-      prompt: req.body.prompt,
-      max_tokens: 150,
-      n: 1,
-      stop: null,
-      temperature: 0.7,
-    }, {
-      headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+    const response = await axios.post(
+      `https://api.aimlapi.com/chat/completions`,
+      {
+        model: 'gpt-3.5-turbo-0301', // Use the appropriate model
+        messages: [{ role: 'user', content: prompt }],   
+        "max_tokens": 512,
+        "stream": false,
       },
-    });
-    res.json(response.data);
+      {
+        headers: {
+          'Authorization': `Bearer f20b25eca0c841748d045c9695870a32`, // Replace with your actual OAuth 2.0 Bearer token
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    // Adjust based on the actual API response structure
+    res.json({ text: response.data.choices[0].message.content });
   } catch (error) {
-    console.error('Error making API request:', error);
-    res.status(500).send('Error making API request');
+    console.error('Error:', error.response ? error.response.data : error.message);
+    if (error.response && error.response.status === 429) {
+      res.status(429).json({ message: 'Quota exceeded. Please check your plan and billing details.' });
+    } else {
+      res.status(error.response ? error.response.status : 500).json({ message: 'An error occurred while communicating with the AI API' });
+    }
   }
 });
+
+
 
 app.get('/developers', async (req, res) => {
   try {
@@ -402,24 +423,30 @@ app.post('/send-feedback', async (req, res) => {
 
 
 // Add Gemini AI API interaction
-app.post('/api/gemini-completions', async (req, res) => {
-  try {
-    const chat = model.startChat({
-      history: [
-        {
-          role: "user",
-          parts: [{ text: req.body.prompt }],
-        },
-      ],
-    });
+// app.post('/api/completions', async (req, res) => {
+//   const { prompt } = req.body;
 
-    const result = await chat.sendMessage(req.body.prompt);
-    res.json({ response: result.response.text() });
-  } catch (error) {
-    console.error("Error making API request:", error);
-    res.status(500).json({ error: "An error occurred." });
-  }
-});
+//   if (!prompt) {
+//     return res.status(400).json({ message: 'Prompt is required' });
+//   }
+//   try {
+//     const chat = model.startChat({
+//       history: [
+//         {
+//           role: "user",
+//           parts: [{ text: prompt }],
+//         },
+//       ],
+//     });
+
+//     const result = await chat.sendMessage(prompt);
+//     console.log(result.response.text());
+//     res.json({ response: await result.response.text() });
+//   } catch (error) {
+//     console.error("Error making API request:", error);
+//     res.status(500).json({ error: "An error occurred." });
+//   }
+// });
 
 
 
