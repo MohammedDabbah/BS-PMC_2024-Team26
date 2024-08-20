@@ -8,6 +8,8 @@ function MessagesPage() {
     subject: '',
     body: ''
   });
+  const [isLoading, setIsLoading] = useState(false); // For handling loading state
+  const [errorMessage, setErrorMessage] = useState(''); // To display error messages
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,9 +21,13 @@ function MessagesPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setErrorMessage(''); // Clear any previous errors
+
     try {
-      const response = await axios.post('http://localhost:3001/send-message', formData);
-      alert('Message sent successfully!');
+      const response = await axios.post('http://localhost:3001/send-message', formData,{withCredentials:true});
+      alert(response.data.message); // Show success message from the server
+
       // Optionally reset the form
       setFormData({
         recipientUsername: '',
@@ -31,7 +37,9 @@ function MessagesPage() {
       });
     } catch (error) {
       console.error('Failed to send message:', error);
-      alert('Failed to send message');
+      setErrorMessage(error.response?.data?.message || 'Failed to send message');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -90,7 +98,10 @@ function MessagesPage() {
             />
           </label>
         </div>
-        <button type="submit">Send Message</button>
+        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? 'Sending...' : 'Send Message'}
+        </button>
       </form>
     </div>
   );

@@ -453,29 +453,44 @@ app.post('/send-feedback', async (req, res) => {
 
 //sending a message
 app.post('/send-message', async (req, res) => {
-  const { recipientUsername, recipientRole, senderUsername, senderRole, subject, body } = req.body;
+  if (req.isAuthenticated()) {
+    const { recipientUsername, recipientRole, subject, body } = req.body;
+    const senderUsername = req.user.username;
+    const senderRole = req.user.role;
 
-  try {
-    const recipient = await userModels[recipientRole].findOne({ username: recipientUsername });
-    if (!recipient) {
-      return res.status(404).json({ message: "Recipient not found" });
+    try {
+      // Check if the recipient role is valid
+      if (!userModels[recipientRole]) {
+        return res.status(400).json({ message: "Invalid recipient role" });
+      }
+
+      // Fetch the recipient
+      const recipient = await userModels[recipientRole].findOne({ username: recipientUsername });
+      if (!recipient) {
+        return res.status(404).json({ message: "Recipient not found" });
+      }
+
+      // Append the new message to recipient's messages array
+      recipient.messages.push({
+        senderUsername,
+        senderRole,
+        subject,
+        body,
+        dateSent: new Date(), // Optional: Store the timestamp of the message
+      });
+
+      await recipient.save();
+
+      return res.status(200).json({ message: "Message sent successfully" });
+    } catch (error) {
+      console.error('Error sending message:', error);
+      return res.status(500).json({ message: 'Failed to send message' });
     }
-
-    // Append new message to recipient's messages
-    recipient.messages.push({
-      senderUsername,
-      senderRole,
-      subject,
-      body
-    });
-
-    await recipient.save();
-    res.status(200).json({ message: "Message sent successfully" });
-  } catch (error) {
-    console.error('Error sending message:', error);
-    res.status(500).json({ message: 'Failed to send message' });
+  } else {
+    return res.status(401).json({ message: "Unauthorized" });
   }
 });
+
 
 
 app.listen(port, () => {

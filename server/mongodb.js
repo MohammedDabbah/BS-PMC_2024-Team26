@@ -13,10 +13,7 @@ const UserSchema = new mongoose.Schema({
   mail: String,
   password: String,
   role: String,
-  messages: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Message',
-  },
+  messages:[]
 });
 UserSchema.plugin(passportLocalMongoose);
 
