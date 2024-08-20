@@ -32,7 +32,7 @@ const LoggedHeader = () => {
 
   const handleTesterMessages = () => {
     console.log("Navigating to Messages");
-    navigate('/TesterMessages');
+    navigate('/Messages');
   };
 
   return (

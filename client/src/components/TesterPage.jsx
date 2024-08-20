@@ -2,7 +2,7 @@ import React from 'react';
 import AI_assistant from './AI_assistant';
 import Header from './Header';
 import { useNavigate } from 'react-router-dom';
-import MessagesPage from './MessagesPage';
+import MessagesForm from './MessagesForm';
 
 const TesterPage = () => {
 
@@ -27,8 +27,11 @@ const TesterPage = () => {
                 </button>
 
                 <AI_assistant />
-                <MessagesPage />
+                </div>
+                <div style={{backgroundColor:"#2E073F", justifyContent: 'center', alignItems: 'center', height: '100%',width:"100%"}}>
+            <MessagesForm/>
             </div>
+            
         </div>
     );
 };

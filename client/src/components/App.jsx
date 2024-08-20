@@ -16,7 +16,8 @@ import DeveloperDetailsPage from './DeveloperDetailsPage';
 import TesterDetailsPage from './TesterDetailsPage';
 import Feedback from './Feedback';
 import AboutUs from './AboutUs';
-import MessagesPage from './MessagesPage';
+import MessagesForm from './MessagesForm';
+import Messages from './Masseges';
 function App() {
   return (
     <AuthProvider>
@@ -35,11 +36,12 @@ function App() {
             <Route path="/developer" element={<DeveloperPage />} />
             <Route path="/tester" element={<TesterPage />} />
             <Route path="/manager" element={<ManagerPage />} />
-            <Route path="/MessagesPage" element={<MessagesPage />} />
+            <Route path="/MessagesForm" element={<MessagesForm />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/ChangePassword" element={<ChangePassword />} />
             <Route path="/developerdeta" element={<DeveloperDetailsPage />} />
             <Route path="/testerdeta" element={<TesterDetailsPage />} />
+            <Route path="/Messages" element={<Messages />} />
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

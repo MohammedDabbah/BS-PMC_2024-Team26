@@ -2,6 +2,9 @@ import React from 'react';
 import AI_assistant from './AI_assistant';
 import Header from './Header';
 import { useNavigate } from 'react-router-dom';
+import MessagesForm from './MessagesForm';
+import Row from 'react-bootstrap/esm/Row';
+import Col from 'react-bootstrap/Col';
 
 const DeveloperPage = () => {
     const navigate = useNavigate();
@@ -11,6 +14,8 @@ const DeveloperPage = () => {
     };
 
     return (
+        <Row>
+        <Col md={12}>
         <div className='primaryPage'>
             <div style={{ display: "flex", justifyContent: "center" }}>
                 <Header />
@@ -23,17 +28,16 @@ const DeveloperPage = () => {
                 >
                     View Tester Details
                 </button>
-
                 <AI_assistant />
-                <MessagesPage />
+            </div>
+            <div style={{backgroundColor:"#2E073F", justifyContent: 'center', alignItems: 'center', height: '100%',width:"100%"}}>
+            <MessagesForm/>
             </div>
         </div>
+        </Col>
+        </Row>
     );
 };
 
 export default DeveloperPage;
 
-
-
-//Hosni
-//Hosni231!
