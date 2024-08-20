@@ -13,6 +13,10 @@ const UserSchema = new mongoose.Schema({
   mail: String,
   password: String,
   role: String,
+  messages: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Message',
+  },
 });
 UserSchema.plugin(passportLocalMongoose);
 
@@ -26,4 +30,14 @@ const userModels = {
   tester: Tester,
 };
 
+
+const MessageSchema = new mongoose.Schema({
+  sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  recipient: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  subject: String,
+  body: String,
+  createdAt: { type: Date, default: Date.now }
+});
+
+const Message = mongoose.model("Message", MessageSchema);
 module.exports = userModels;

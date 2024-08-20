@@ -12,11 +12,11 @@ import PublicRoute from './PublicRoute';
 import ForgotPassword from './ForgotPassword';
 import Profile from './Profile';
 import ChangePassword from './ChangePassword';
-import Messages from './Messages';
 import DeveloperDetailsPage from './DeveloperDetailsPage';
 import TesterDetailsPage from './TesterDetailsPage';
 import Feedback from './Feedback';
 import AboutUs from './AboutUs';
+import MessagesPage from './MessagesPage';
 function App() {
   return (
     <AuthProvider>
@@ -34,8 +34,8 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/developer" element={<DeveloperPage />} />
             <Route path="/tester" element={<TesterPage />} />
-            <Route path="/messages" element={<Messages />} />
             <Route path="/manager" element={<ManagerPage />} />
+            <Route path="/MessagesPage" element={<MessagesPage />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/ChangePassword" element={<ChangePassword />} />
             <Route path="/developerdeta" element={<DeveloperDetailsPage />} />

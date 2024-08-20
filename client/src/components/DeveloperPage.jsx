@@ -16,9 +16,9 @@ const DeveloperPage = () => {
                 <Header />
             </div>
             <div>
-                <button 
-                    onClick={handleViewTesterDetails} 
-                    className='btn view-details-btn' 
+                <button
+                    onClick={handleViewTesterDetails}
+                    className='btn view-details-btn'
                     style={{ margin: '1rem', color: "white", textDecoration: "underline" }}
                 >
                     View Tester Details
@@ -31,3 +31,8 @@ const DeveloperPage = () => {
 };
 
 export default DeveloperPage;
+
+
+
+//Hosni
+//Hosni231!

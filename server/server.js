@@ -11,6 +11,7 @@ const ChatHistory = require('./chatHistory');
 
 
 const app = express();
+const router = express.Router();
 const port = 3001;
 const verificationCodes = {};
 
@@ -51,8 +52,8 @@ passport.serializeUser((user, cb) => {
       lname: user.lname,
       role: user.role,
       mail: user.mail,
-      userInput:[],
-      chatRes:[],
+      userInput: [],
+      chatRes: [],
     });
   });
 });
@@ -314,7 +315,7 @@ app.post('/api/completions', async (req, res) => {
       `https://api.aimlapi.com/chat/completions`,
       {
         model: 'gpt-3.5-turbo-0301', // Use the appropriate model
-        messages: [{ role: 'user', content: prompt }],   
+        messages: [{ role: 'user', content: prompt }],
         "max_tokens": 512,
         "stream": false,
       },
@@ -448,8 +449,33 @@ app.post('/send-feedback', async (req, res) => {
 //   }
 // });
 
+//messages
 
+//sending a message
+app.post('/send-message', async (req, res) => {
+  const { recipientUsername, recipientRole, senderUsername, senderRole, subject, body } = req.body;
 
+  try {
+    const recipient = await userModels[recipientRole].findOne({ username: recipientUsername });
+    if (!recipient) {
+      return res.status(404).json({ message: "Recipient not found" });
+    }
+
+    // Append new message to recipient's messages
+    recipient.messages.push({
+      senderUsername,
+      senderRole,
+      subject,
+      body
+    });
+
+    await recipient.save();
+    res.status(200).json({ message: "Message sent successfully" });
+  } catch (error) {
+    console.error('Error sending message:', error);
+    res.status(500).json({ message: 'Failed to send message' });
+  }
+});
 
 
 app.listen(port, () => {
