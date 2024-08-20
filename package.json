@@ -2,9 +2,11 @@
   "dependencies": {
     "@chatscope/chat-ui-kit-react": "^2.0.3",
     "@google/generative-ai": "^0.16.0",
+    "bootstrap": "^5.3.3",
     "dotenv": "^16.4.5",
     "openai": "^4.53.2",
     "react": "^18.3.1",
+    "react-bootstrap": "^2.10.4",
     "react-dom": "^18.3.1",
     "vite": "^5.3.5"
   },

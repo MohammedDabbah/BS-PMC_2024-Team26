@@ -25,6 +25,7 @@ const DeveloperPage = () => {
                 </button>
 
                 <AI_assistant />
+                <MessagesPage />
             </div>
         </div>
     );

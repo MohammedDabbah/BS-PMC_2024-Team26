@@ -17,20 +17,21 @@ const ManagerPage = () => {
 
   return (
     <div className='primaryPage'>
-    <div style={{ display: "flex", justifyContent: "center" }}>
+      <div style={{ display: "flex", justifyContent: "center" }}>
         <Header />
-    </div>
-      <button onClick={handleViewDeveloperDetails} 
-       className='btn view-details-btn' 
-       style={{ margin: '1rem', color: "white", textDecoration: "underline" }}>
+      </div>
+      <button onClick={handleViewDeveloperDetails}
+        className='btn view-details-btn'
+        style={{ margin: '1rem', color: "white", textDecoration: "underline" }}>
         View Developer Details
       </button>
-      <button onClick={handleViewTesterDetails}  className='btn view-details-btn' 
-       style={{ margin: '1rem', color: "white", textDecoration: "underline" }}>
+      <button onClick={handleViewTesterDetails} className='btn view-details-btn'
+        style={{ margin: '1rem', color: "white", textDecoration: "underline" }}>
         View Tester Details
       </button>
 
       <AI_assistant />
+      <MessagesPage />
     </div>
   );
 };
