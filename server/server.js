@@ -533,6 +533,32 @@ app.post('/update-message-status', async (req, res) => {
   }
 });
 
+
+app.delete('/messages-delete', async (req, res) => {
+  try {
+    if (req.isAuthenticated()) {
+      const messageSubject = req.params.subject;
+
+      
+      const messageIndex = req.user.messages.findIndex(message => message.subject === messageSubject);
+
+      if (messageIndex !== -1) {
+        
+        req.user.messages.splice(messageIndex, 1);
+        await req.user.save();
+        res.status(200).json({ message: 'Message deleted successfully' });
+      } else {
+        res.status(404).json({ message: 'Message not found' });
+      }
+    } else {
+      res.status(401).json({ message: 'User is not authenticated' });
+    }
+  } catch (error) {
+    console.error('Error deleting message:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });

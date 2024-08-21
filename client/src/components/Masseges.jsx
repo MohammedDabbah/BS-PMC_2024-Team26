@@ -55,7 +55,23 @@ function Messages() {
     }
   }
 
-  async function handleDelete() { };
+  
+  async function handleDelete(messageSubject) {
+    console.log("Attempting to delete message with subject:", messageSubject);
+  
+    try {
+      const response = await axios.delete(`http://localhost:3001/messages/${messageSubject}`, { withCredentials: true });
+      
+      if (response.status === 200) {
+        console.log("Message deleted successfully");
+        setMessages(prevMessages => prevMessages.filter(message => message.subject !== messageSubject));
+      } else {
+        console.error('Failed to delete message:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error deleting message:', error);
+    }
+  }
 
   return (
     <div
@@ -139,7 +155,7 @@ function Messages() {
                       borderRadius: "4px",
                       cursor: "pointer",
                     }}
-                    onClick={handleDelete}
+                    onClick={() => handleDelete(messages.subject)}
                   >
                     Delete
                   </button>
