@@ -14,7 +14,8 @@ function MessagesForm() {
     recipientUsername: '',
     recipientRole: '',
     subject: '',
-    body: ''
+    body: '',
+    done:false,
   });
   const [messageStatus, setMessageStatus] = useState(null); // To track the success or error message
 

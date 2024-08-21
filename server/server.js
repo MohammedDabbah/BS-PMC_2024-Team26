@@ -52,6 +52,7 @@ passport.serializeUser((user, cb) => {
       lname: user.lname,
       role: user.role,
       mail: user.mail,
+      msg:user.msg,
       userInput: [],
       chatRes: [],
     });
@@ -454,7 +455,7 @@ app.post('/send-feedback', async (req, res) => {
 //sending a message
 app.post('/send-message', async (req, res) => {
   if (req.isAuthenticated()) {
-    const { recipientUsername, recipientRole, subject, body } = req.body;
+    const { recipientUsername, recipientRole, subject, body,done } = req.body;
     const senderUsername = req.user.username;
     const senderRole = req.user.role;
 
@@ -476,6 +477,7 @@ app.post('/send-message', async (req, res) => {
         senderRole,
         subject,
         body,
+        done,
         dateSent: new Date(), // Optional: Store the timestamp of the message
       });
 
@@ -490,6 +492,21 @@ app.post('/send-message', async (req, res) => {
     return res.status(401).json({ message: "Unauthorized" });
   }
 });
+
+app.get('/messages', async (req, res) => {
+  try {
+    if (req.isAuthenticated()) {
+      // Assuming req.user.messages is an array of message objects
+      res.status(200).json(req.user.messages);
+    } else {
+      res.status(401).json({ message: 'User is not authenticated' });
+    }
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 
 
 
