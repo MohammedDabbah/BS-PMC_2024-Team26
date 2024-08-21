@@ -508,24 +508,27 @@ app.get('/messages', async (req, res) => {
 });
 
 
-app.post('/update-message-status', async (req, res) => {
-  try {
-    const { messageId } = req.body;
-
+app.get('/update-message-status',async (req,res)=>{
+  try{
+    const {index}=req.query;
+    const messageIndex =parseInt(index, 10);
+    if (isNaN(messageIndex) || messageIndex < 0) {
+      return res.status(400).json({ message: "Invalid message index" });
+    }
     if (!req.isAuthenticated()) {
       return res.status(401).json({ message: "Unauthorized" });
     }
+    const UserModel = userModels[req.user.role];
+    const user = await UserModel.findOne({ username: req.user.username });
 
-    const user = req.user; 
-
-    const message = user.messages.id(messageId);
-    if (!message) {
+    // Ensure messages array exists and index is within bounds
+    if (!user || !user.messages || !user.messages[messageIndex]) {
       return res.status(404).json({ message: "Message not found" });
     }
-
-    message.done = true;
+    const obj= user.messages[messageIndex];
+    obj.done=true;
+    user.messages[messageIndex] = obj;
     await user.save();
-
     return res.status(200).json({ message: "Message status updated successfully" });
   } catch (error) {
     console.error('Error updating message status:', error);
@@ -534,30 +537,35 @@ app.post('/update-message-status', async (req, res) => {
 });
 
 
+
 app.delete('/messages-delete', async (req, res) => {
   try {
-    if (req.isAuthenticated()) {
-      const messageSubject = req.params.subject;
-
-      
-      const messageIndex = req.user.messages.findIndex(message => message.subject === messageSubject);
-
-      if (messageIndex !== -1) {
-        
-        req.user.messages.splice(messageIndex, 1);
-        await req.user.save();
-        res.status(200).json({ message: 'Message deleted successfully' });
-      } else {
-        res.status(404).json({ message: 'Message not found' });
-      }
-    } else {
-      res.status(401).json({ message: 'User is not authenticated' });
+    const { index } = req.query;
+    const messageIndex = parseInt(index, 10);
+    if (isNaN(messageIndex) || messageIndex < 0) {
+      return res.status(400).json({ message: "Invalid message index" });
     }
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    const UserModel = userModels[req.user.role];
+    const user = await UserModel.findOne({ username: req.user.username });
+
+    if (!user || !user.messages || !user.messages[messageIndex]) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+    const arr=user.messages;
+    arr.splice(messageIndex,1);
+    user.messages=arr; // Remove the message
+    await user.save();
+
+    return res.status(200).json({ message: "Message deleted successfully" });
   } catch (error) {
     console.error('Error deleting message:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 });
+
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);

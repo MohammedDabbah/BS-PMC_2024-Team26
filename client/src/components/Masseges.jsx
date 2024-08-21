@@ -4,6 +4,7 @@ import Header from "./Header";
 
 function Messages() {
   const [messages, setMessages] = useState([]);
+  const [status,setStatus] = useState('');
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -21,55 +22,40 @@ function Messages() {
   }, []); // Empty dependency array to ensure it only runs once when the component mounts.
 
   async function handleDone(index) {
-    console.log("Button clicked, message index:", index);  // Log to ensure function is called
-
-    const message = messages[index];
-    if (!message) {
-      console.error("No message found at the given index!");
-      return;
-    }
-
-    try {
-      console.log("Sending POST request to update message status..."); // Log before the request
-      const response = await axios.post(
-        "http://localhost:3001/update-message-status",
-        { messageId: message._id || index },  // Use index or _id if available
-        { withCredentials: true }
-      );
-
-      console.log("Server response:", response); // Log after the request
-
-      if (response.status === 200) {
-        console.log("Before state update:", messages);
-        setMessages((prevMessages) =>
-          prevMessages.map((msg, i) =>
-            i === index ? { ...msg, done: true } : msg
-          )
+      try {
+        const response = await axios.get(
+          "http://localhost:3001/update-message-status",
+          {
+            params: { index: index },
+            withCredentials: true
+          }
         );
-        console.log("Message status updated successfully");
-      } else {
-        console.error('Failed to update message status:', response.data.message);
-      }
-    } catch (error) {
-      console.error("Error updating message status:", error);
+        if (response.status === 200) {
+          // Optionally update the local state to reflect the change
+          setMessages(prevMessages =>
+            prevMessages.map((msg, i) =>
+              i === index ? { ...msg, done: true } : msg
+            )
+          );
+        }
+    }catch(err){
+
     }
   }
 
   
-  async function handleDelete(messageSubject) {
-    console.log("Attempting to delete message with subject:", messageSubject);
-  
+  async function handleDelete(index) {
     try {
-      const response = await axios.delete(`http://localhost:3001/messages/${messageSubject}`, { withCredentials: true });
-      
+      const response = await axios.delete("http://localhost:3001/messages-delete", {
+        params: { index: index },
+        withCredentials: true
+      });
       if (response.status === 200) {
-        console.log("Message deleted successfully");
-        setMessages(prevMessages => prevMessages.filter(message => message.subject !== messageSubject));
-      } else {
-        console.error('Failed to delete message:', response.data.message);
+        // Update the local state to remove the deleted message
+        setMessages(prevMessages => prevMessages.filter((_, i) => i !== index));
       }
-    } catch (error) {
-      console.error('Error deleting message:', error);
+    } catch (err) {
+      console.error("Error deleting message:", err);
     }
   }
 
@@ -155,7 +141,7 @@ function Messages() {
                       borderRadius: "4px",
                       cursor: "pointer",
                     }}
-                    onClick={() => handleDelete(messages.subject)}
+                    onClick={() => handleDelete(index)}
                   >
                     Delete
                   </button>
