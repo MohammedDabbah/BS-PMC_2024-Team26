@@ -20,9 +20,42 @@ function Messages() {
     fetchMessages();
   }, []); // Empty dependency array to ensure it only runs once when the component mounts.
 
-  async function handleDone(){};
+  async function handleDone(index) {
+    console.log("Button clicked, message index:", index);  // Log to ensure function is called
 
-  async function handleDelete(){};
+    const message = messages[index];
+    if (!message) {
+      console.error("No message found at the given index!");
+      return;
+    }
+
+    try {
+      console.log("Sending POST request to update message status..."); // Log before the request
+      const response = await axios.post(
+        "http://localhost:3001/update-message-status",
+        { messageId: message._id || index },  // Use index or _id if available
+        { withCredentials: true }
+      );
+
+      console.log("Server response:", response); // Log after the request
+
+      if (response.status === 200) {
+        console.log("Before state update:", messages);
+        setMessages((prevMessages) =>
+          prevMessages.map((msg, i) =>
+            i === index ? { ...msg, done: true } : msg
+          )
+        );
+        console.log("Message status updated successfully");
+      } else {
+        console.error('Failed to update message status:', response.data.message);
+      }
+    } catch (error) {
+      console.error("Error updating message status:", error);
+    }
+  }
+
+  async function handleDelete() { };
 
   return (
     <div
@@ -78,7 +111,7 @@ function Messages() {
                   marginRight: "20px",
                 }}
               />
-              <div style={{ flex: 1,textDecoration: x.done ?'line-through': null }}>
+              <div style={{ flex: 1, textDecoration: x.done ? 'line-through' : null }}>
                 <h4>Sender: @{x.senderUsername}</h4>
                 <h5>Subject: {x.subject}</h5>
                 <h6>Content: {x.body}</h6>
@@ -93,7 +126,7 @@ function Messages() {
                       borderRadius: "4px",
                       cursor: "pointer",
                     }}
-                    onClick={handleDone}
+                    onClick={() => handleDone(index)}  // Use index as identifier
                   >
                     Done
                   </button>
