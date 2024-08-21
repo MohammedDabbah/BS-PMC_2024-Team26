@@ -126,7 +126,7 @@ function Messages() {
                       borderRadius: "4px",
                       cursor: "pointer",
                     }}
-                    onClick={() => handleDone(index)}  // Use index as identifier
+                    onClick={() => handleDone(index)}
                   >
                     Done
                   </button>
