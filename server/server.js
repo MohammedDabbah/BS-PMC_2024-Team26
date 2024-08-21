@@ -508,7 +508,30 @@ app.get('/messages', async (req, res) => {
 });
 
 
+app.post('/update-message-status', async (req, res) => {
+  try {
+    const { messageId } = req.body;
 
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const user = req.user; 
+
+    const message = user.messages.id(messageId);
+    if (!message) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+
+    message.done = true;
+    await user.save();
+
+    return res.status(200).json({ message: "Message status updated successfully" });
+  } catch (error) {
+    console.error('Error updating message status:', error);
+    return res.status(500).json({ message: 'Failed to update message status' });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
