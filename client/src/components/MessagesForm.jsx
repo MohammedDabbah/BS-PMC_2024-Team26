@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
 import Alert from 'react-bootstrap/Alert';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -62,7 +59,7 @@ function MessagesForm() {
       {showForm && (
         <>
           {messageStatus && (
-            <Alert variant={messageStatus.type} onClose={() => setMessageStatus(null)} dismissible>
+            <Alert variant={messageStatus.type} onClose={() => setMessageStatus(null)} dismissible style={{marginTop:"20px"}}>
               {messageStatus.text}
             </Alert>
           )}

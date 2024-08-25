@@ -8,8 +8,8 @@ const TesterPage = () => {
 
     const navigate = useNavigate();
 
-    const handleViewTesterDetails = () => {
-        navigate('/testerdeta');
+    const handleViewCollab = () => {
+        navigate('/Collaboration');
     };
 
     return (
@@ -19,11 +19,11 @@ const TesterPage = () => {
             </div>
             <div>
                 <button
-                    onClick={handleViewTesterDetails}
+                    onClick={handleViewCollab}
                     className='btn view-details-btn'
                     style={{ margin: '1rem', color: "white", textDecoration: "underline" }}
                 >
-                    View Tester Details
+                       View collaboration
                 </button>
 
                 <AI_assistant />

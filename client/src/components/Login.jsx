@@ -6,12 +6,14 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('developer'); // Default role
     const { setUser } = useContext(AuthContext);
     const navigate = useNavigate();
+    const [message, setMessage] = useState('');
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -40,11 +42,16 @@ const Login = () => {
                         break;
                 }
             } else {
-                alert('Login failed');
+                setMessage(response.data.message);
             }
         } catch (error) {
-            alert('Login failed');
-            console.error(error);
+            // Make sure error handling is robust and won't crash the app
+            if (error.response && error.response.data) {
+                setMessage(error.response.data.message);
+            } else {
+                setMessage('An unexpected error occurred');
+            }
+            console.error('Login error:', error);
         }
     };
 
@@ -127,10 +134,11 @@ const Login = () => {
                             <a className='btn btn-dark' href="/ForgotPassword" style={{ marginTop: '0.5rem' }}>
                                 Forgot your password? click here
                             </a>
+                            {message && <p  style={{ color: 'red' }}>{message}</p>}
                         </Col>
+                      
                     </Row>
                 </Form>
-
             </div>
         </div>
     );

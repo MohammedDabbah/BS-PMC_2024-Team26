@@ -11,19 +11,15 @@ function AI_assistant() {
   // Load messages and input from cookies when the component mounts
   useEffect(() => {
     const savedMessages = Cookies.get("chatMessages");
-    // const savedInput = Cookies.get("chatInput");
-
     if (savedMessages) {
       setMessages(JSON.parse(savedMessages));
     }
+  }, []);
 
-    // if (savedInput) {
-    //   setInput(savedInput);
-    // }
-  },[]);
-
-  // Save messages and input to cookies whenever they update
-
+  // Save messages to cookies whenever they update
+  useEffect(() => {
+    Cookies.set("chatMessages", JSON.stringify(messages), { expires: 1 });
+  }, [messages]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -51,10 +47,7 @@ function AI_assistant() {
 
   const formatMessageText = (text) => {
     if (!text) return ""; // If the text is undefined or empty, return an empty string
-
-    let formattedText = text.replace(/\n/g, "<br />");
-    formattedText = formattedText.replace(/;/g, "<br />").replace(/\./g, "<br />");
-    return formattedText;
+    return text.replace(/\n/g, "<br />");
   };
 
   return (
@@ -117,10 +110,6 @@ function AI_assistant() {
         />
         <button
           type="submit"
-          onClick={  useEffect(() => {
-    Cookies.set("chatMessages", JSON.stringify(messages), { expires: 1 }); // Cookie expires in 7 days
-    // Cookies.set("chatInput", input, { expires: 7 });
-  }, [messages, input])}
           style={{
             padding: "10px",
             width: "20%",

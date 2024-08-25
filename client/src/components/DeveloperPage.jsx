@@ -9,8 +9,8 @@ import Col from 'react-bootstrap/Col';
 const DeveloperPage = () => {
     const navigate = useNavigate();
 
-    const handleViewTesterDetails = () => {
-        navigate('/testerdeta');
+    const handleViewCollab = () => {
+        navigate('/Collaboration');
     };
 
     return (
@@ -22,11 +22,11 @@ const DeveloperPage = () => {
             </div>
             <div>
                 <button
-                    onClick={handleViewTesterDetails}
+                    onClick={handleViewCollab}
                     className='btn view-details-btn'
                     style={{ margin: '1rem', color: "white", textDecoration: "underline" }}
                 >
-                    View Tester Details
+                      View collaboration
                 </button>
                 <AI_assistant />
             </div>

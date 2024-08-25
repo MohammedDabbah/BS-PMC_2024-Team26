@@ -175,7 +175,7 @@ function Profile() {
                         {messages.codeError && <Form.Text style={{ color: 'red' }}>{messages.codeError}</Form.Text>}
                         <button
                           type="button"
-                          className="btn btn-success btn"
+                          className="btn btn-success"
                           onClick={handleVerification}
                         >
                           Verify Email
@@ -191,6 +191,7 @@ function Profile() {
                           placeholder="Verification code"
                           onChange={(e) => setCode(e.target.value)}
                           required
+                          style={{marginTop:"20px"}}
                         />
                       </Form.Group>
                     </Col>

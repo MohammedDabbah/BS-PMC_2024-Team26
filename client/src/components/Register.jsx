@@ -277,8 +277,8 @@ const Register = () => {
               </Form.Group>
             </Col>
           </Row>
-          {messages.errorMessage && <p className="error-message" style={{ color: 'red' }}>{messages.errorMessage}</p>}
-          {messages.successMessage && <p className="success-message" style={{ color: 'green' }}>{messages.successMessage}</p>}
+          {messages.errorMessage && <p  style={{ color: 'red' }}>{messages.errorMessage}</p>}
+          {messages.successMessage && <p  style={{ color: 'green' }}>{messages.successMessage}</p>}
           <div className="text-center">
             <a href="/login">Already have an account?</a>
           </div>

@@ -18,6 +18,7 @@ import Feedback from './Feedback';
 import AboutUs from './AboutUs';
 import MessagesForm from './MessagesForm';
 import Messages from './Masseges';
+import Collaboration from './Collaboration';
 function App() {
   return (
     <AuthProvider>
@@ -42,6 +43,7 @@ function App() {
             <Route path="/developerdeta" element={<DeveloperDetailsPage />} />
             <Route path="/testerdeta" element={<TesterDetailsPage />} />
             <Route path="/Messages" element={<Messages />} />
+            <Route path="/Collaboration" element={<Collaboration />} />
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

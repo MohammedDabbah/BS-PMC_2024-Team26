@@ -5,16 +5,13 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Header from "./Header";
-import Footer from "./Footer";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function ChangePassword() {
     const navigate = useNavigate();
-    const [username, setUsername] = useState("");
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmNewPassword, setConfirmNewPassword] = useState("");
-    const [role, setRole] = useState(""); // Add role state
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
 
@@ -30,7 +27,7 @@ function ChangePassword() {
         try {
             const response = await axios.post(
                 "http://localhost:3001/ChangePassword",
-                { username, currentPassword, newPassword, role }, // Include role in the request
+                {currentPassword, newPassword, confirmNewPassword }, // Include role in the request
                 { withCredentials: true }
             );
             setSuccessMessage('Password reset successful');
@@ -47,7 +44,8 @@ function ChangePassword() {
 
     return (
         <div className="backG">
-            < div >
+        
+            <div>
                 <div style={{ marginTop: "8rem" }}>
                     <button
                         className="btn btn-secondary"
@@ -63,19 +61,8 @@ function ChangePassword() {
                         Back
                     </button>
                     <Form onSubmit={handleSubmit} className="mb-3">
-                        <h2 style={{ marginLeft: '0.5rem', marginTop: "1rem", fontStyle: 'oblique', fontFamily: 'monospace', textDecorationLine: ' overline' }}>Password reset</h2>
+                    <h2 style={{ textAlign: "center" }}>Password Change</h2>
                         <Row>
-                            <Col md={12}>
-                                <Form.Group className="mb-3 small-form-group" controlId="formUsername">
-                                    <Form.Label>Username</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Username"
-                                        value={username}
-                                        onChange={(event) => setUsername(event.target.value)}
-                                    />
-                                </Form.Group>
-                            </Col>
                             <Col md={12}>
                                 <Form.Group className="mb-3 small-form-group" controlId="formCurrentPassword">
                                     <Form.Label>Current Password</Form.Label>
@@ -109,17 +96,6 @@ function ChangePassword() {
                                     />
                                 </Form.Group>
                             </Col>
-                            <Col md={12}>
-                                <Form.Group className="mb-3 small-form-group" controlId="formRole">
-                                    <Form.Label>Role</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Role (developer, manager, tester)"
-                                        value={role}
-                                        onChange={(event) => setRole(event.target.value)}
-                                    />
-                                </Form.Group>
-                            </Col>
                             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
                             {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
                             <Col md={12}>
@@ -129,7 +105,7 @@ function ChangePassword() {
                             </Col>
                         </Row>
                     </Form>
-                </ div>
+                </div>
             </div>
         </div>
     );

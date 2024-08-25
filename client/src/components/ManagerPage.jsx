@@ -10,13 +10,11 @@ import Col from 'react-bootstrap/Col';
 const ManagerPage = () => {
   const navigate = useNavigate();
 
-  const handleViewDeveloperDetails = () => {
-    navigate('/developerdeta');
-  };
+  const handleViewCollab = () => {
+    navigate('/Collaboration');
+};
 
-  const handleViewTesterDetails = () => {
-    navigate('/testerdeta');
-  };
+ 
 
   return (
     <Row>
@@ -26,14 +24,10 @@ const ManagerPage = () => {
         <Header />
       </div>
       <div>
-      <button onClick={handleViewDeveloperDetails}
+      <button onClick={handleViewCollab}
         className='btn view-details-btn'
         style={{ margin: '1rem', color: "white", textDecoration: "underline" }}>
-        View Developer Details
-      </button>
-      <button onClick={handleViewTesterDetails} className='btn view-details-btn'
-        style={{ margin: '1rem', color: "white", textDecoration: "underline" }}>
-        View Tester Details
+        View collaboration
       </button>
 
       <AI_assistant />
