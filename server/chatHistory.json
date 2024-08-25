@@ -1,0 +1,66 @@
+[
+  {
+    "text": "hey",
+    "sender": "user"
+  },
+  {
+    "text": "Sorry, there was an error processing your request.",
+    "sender": "ai"
+  },
+  {
+    "text": "hey",
+    "sender": "user"
+  },
+  {
+    "text": "Sorry, there was an error processing your request.",
+    "sender": "ai"
+  },
+  {
+    "text": "what's up",
+    "sender": "user"
+  },
+  {
+    "text": "Not much, just here to help you! What’s on your mind?",
+    "sender": "ai"
+  },
+  {
+    "text": "tell a joke",
+    "sender": "user"
+  },
+  {
+    "text": "Sure! Here’s one for you:\n\nWhy did the scarecrow win an award?\n\nBecause he was outstanding in his field!",
+    "sender": "ai"
+  },
+  {
+    "text": "one more",
+    "sender": "user"
+  },
+  {
+    "text": "Sure! What do you need help with? If you're looking for information, a task, or something else, just let me know!",
+    "sender": "ai"
+  },
+  {
+    "text": "give me short code in python",
+    "sender": "user"
+  },
+  {
+    "text": "Sure! Here’s a short and simple Python code snippet that prints \"Hello, World!\" and demonstrates a basic function:\n\n```python\ndef greet(name):\n    return f\"Hello, {name}!\"\n\nif __name__ == \"__main__\":\n    print(greet(\"World\"))\n```\n\nYou can run this code in any Python environment. It defines a function `greet` that takes a name as an argument and then prints a greeting message.",
+    "sender": "ai"
+  },
+  {
+    "text": "thanx",
+    "sender": "user"
+  },
+  {
+    "text": "You're welcome! If you have any questions or need assistance with something, feel free to ask!",
+    "sender": "ai"
+  },
+  {
+    "text": "hey",
+    "sender": "user"
+  },
+  {
+    "text": "Hello! How can I assist you today?",
+    "sender": "ai"
+  }
+]

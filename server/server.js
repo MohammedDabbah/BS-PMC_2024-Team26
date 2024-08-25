@@ -8,6 +8,7 @@ const { generateFourDigitCode, sendEmail } = require('./mail');
 const axios = require('axios');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const ChatHistory = require('./chatHistory');
+const fs = require('fs');
 
 
 const app = express();
@@ -192,21 +193,32 @@ app.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 
+
 // Change password
 app.post('/ChangePassword', async (req, res) => {
   try {
-    const { username, currentPassword, newPassword, role } = req.body;
+    const {currentPassword, newPassword, confirmNewPassword} = req.body;
 
-    if (!username || !currentPassword || !newPassword || !role) {
+    console.log(req.body);
+
+    if (!currentPassword || !newPassword) {
       return res.status(406).json({ message: "Please fill all the details" });
     }
 
-    const UserModel = userModels[role];
+    if(newPassword!==confirmNewPassword){
+      return res.status(406).json({ message: "Passwords does not match" });
+    }
+
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const UserModel = userModels[req.user.role];
     if (!UserModel) {
       return res.status(400).json({ message: "Invalid role specified" });
     }
 
-    const existingUser = await UserModel.findOne({ username });
+    const existingUser = await UserModel.findOne({username:req.user.username});
 
     if (!existingUser) {
       return res.status(406).json({ message: "Username not found" });
@@ -455,7 +467,7 @@ app.post('/send-feedback', async (req, res) => {
 //sending a message
 app.post('/send-message', async (req, res) => {
   if (req.isAuthenticated()) {
-    const { recipientUsername, recipientRole, subject, body,done } = req.body;
+    const { recipientUsername, recipientRole, subject, body, done } = req.body;
     const senderUsername = req.user.username;
     const senderRole = req.user.role;
 
@@ -469,6 +481,15 @@ app.post('/send-message', async (req, res) => {
       const recipient = await userModels[recipientRole].findOne({ username: recipientUsername });
       if (!recipient) {
         return res.status(404).json({ message: "Recipient not found" });
+      }
+
+      // Check if the recipient is in the sender's collab array
+      const isCollab = req.user.collab.some(collab =>
+        collab.username === recipientUsername && collab.role === recipientRole
+      );
+
+      if (!isCollab) {
+        return res.status(403).json({ message: "You can only send messages to users in your collaboration list" });
       }
 
       // Append the new message to recipient's messages array
@@ -492,6 +513,7 @@ app.post('/send-message', async (req, res) => {
     return res.status(401).json({ message: "Unauthorized" });
   }
 });
+
 
 app.get('/messages', async (req, res) => {
   try {
@@ -557,6 +579,106 @@ app.delete('/messages-delete', async (req, res) => {
     const arr=user.messages;
     arr.splice(messageIndex,1);
     user.messages=arr; // Remove the message
+    await user.save();
+
+    return res.status(200).json({ message: "Message deleted successfully" });
+  } catch (error) {
+    console.error('Error deleting message:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.post('/adding-collab', async (req, res) => {
+  const { collabUsername, collabRole } = req.body;
+
+  // Check if all details are provided
+  if (!collabUsername || !collabRole) {
+    return res.status(406).json({ message: "Please fill all the details" });
+  }
+
+  try {
+    // Check if the user is authenticated
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const UserModel = userModels[collabRole];
+    const user = await UserModel.findOne({ username: collabUsername });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if the collaboration already exists
+    const collaborationExists = req.user.collab.some(collab =>
+      collab.username === collabUsername && collab.role === collabRole
+    );
+
+    if (collaborationExists) {
+      return res.status(409).json({ message: "Collaboration already exists" });
+    }
+
+    // Add the new collaboration
+    req.user.collab.push({
+      fname: user.fname,
+      lname: user.lname,
+      username: collabUsername,
+      role: collabRole,
+      mail: user.mail
+    });
+    await req.user.save();
+
+    // Send success response
+    return res.status(200).json({ message: "Collaboration added successfully" });
+  } catch (err) {
+    console.error('Error adding collaboration:', err);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+
+app.get('/get-collaborations', async (req, res) => {
+  try {
+    // Check if the user is authenticated
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    // Find the authenticated user
+    const UserModel = userModels[req.user.role];
+    const user = await UserModel.findById(req.user._id).populate('collab.username');
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Return the user's collaborations
+    return res.status(200).json({ collaborations: user.collab });
+  } catch (err) {
+    console.error('Error fetching collaborations:', err);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+app.delete('/collab-delete',async(req,res)=>{
+  try {
+    const { index } = req.query;
+    const collabIndex = parseInt(index, 10);
+    if (isNaN(collabIndex) || collabIndex < 0) {
+      return res.status(400).json({ message: "Invalid message index" });
+    }
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    const UserModel = userModels[req.user.role];
+    const user = await UserModel.findOne({ username: req.user.username });
+
+    if (!user || !user.messages || !user.messages[collabIndex]) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+    const arr=user.collab;
+    arr.splice(collabIndex,1);
+    user.collab=arr; // Remove the message
     await user.save();
 
     return res.status(200).json({ message: "Message deleted successfully" });

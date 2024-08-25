@@ -13,7 +13,8 @@ const UserSchema = new mongoose.Schema({
   mail: String,
   password: String,
   role: String,
-  messages:[]
+  messages:[],
+  collab:[],
 });
 UserSchema.plugin(passportLocalMongoose);
 
